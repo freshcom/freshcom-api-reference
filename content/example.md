@@ -185,6 +185,10 @@ client.updateWobble('wobble-id', options, function(err, wobble) {
 });
 ```
 
+```json
+{}
+```
+
 #### Example request body
 
 ```json

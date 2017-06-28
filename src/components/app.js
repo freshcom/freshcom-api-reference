@@ -12,27 +12,15 @@ let slugger = new GithubSlugger();
 let slug = title => { slugger.reset(); return slugger.slug(title); };
 
 let languageOptions = [
+  { title: 'HTTP',
+    short: 'http',
+    value: 'http' },
   { title: 'cURL',
     short: 'cURL',
     value: 'curl' },
-  { title: 'CLI',
-    short: 'cli',
-    value: 'cli' },
-  { title: 'Python',
-    short: 'Python',
-    value: 'python' },
   { title: 'JavaScript',
     short: 'JS',
-    value: 'javascript' },
-  { title: 'Java',
-    short: 'Java',
-    value: 'java' },
-  { title: 'Objective-C',
-    short: 'ObjC',
-    value: 'objc' },
-  { title: 'Swift',
-    short: 'Swift',
-    value: 'swift' }
+    value: 'javascript' }
 ];
 
 let defaultLanguage = languageOptions[0];
@@ -165,12 +153,12 @@ var App = React.createClass({
     return (<div className='container unlimiter'>
 
       {/* Content background */ }
-      {(!col1 && !queryMatches.mobile) && <div className={`fixed-top fixed-right ${queryMatches.desktop && 'space-left16'}`}>
+      {(!col1 && !queryMatches.mobile) && <div className={`fixed-top fixed-right ${queryMatches.desktop && 'space-left20'}`}>
         <div className='fill-light col6 pin-right'></div>
       </div>}
 
       {/* Desktop nav */ }
-      {queryMatches.desktop && <div className='space-top5 scroll-styled overflow-auto pad1 width16 sidebar fixed-left fill-dark dark'>
+      {queryMatches.desktop && <div className='space-top5 scroll-styled overflow-auto pad1 width20 sidebar fixed-left fill-dark dark'>
         <Navigation
           navigationItemClicked={this.navigationItemClicked}
           activeSection={activeSection}
@@ -178,7 +166,7 @@ var App = React.createClass({
       </div>}
 
       {/* Content */ }
-      <div className={`${queryMatches.desktop && 'space-left16'}`}>
+      <div className={`${queryMatches.desktop && 'space-left20'}`}>
         <div className={col1 ? 'col8 margin1' : ''}>
           <Content
             leftClassname={col1 ? 'space-bottom4 pad2x prose clip' : 'space-bottom8 col6 pad2x prose clip'}
@@ -189,11 +177,8 @@ var App = React.createClass({
       </div>
 
       {/* Language toggle */ }
-      <div className={`fixed-top ${queryMatches.desktop && 'space-left16'}`}>
+      <div className={`fixed-top ${queryMatches.desktop && 'space-left20'}`}>
         <div className={`events fill-light bottom-shadow pad1 ${col1 ? '' : 'col6 pin-topright'} ${queryMatches.tablet ? 'dark fill-blue' : ''} ${queryMatches.mobile ? 'space-top5 fixed-topright' : ''}`}>
-          <div className='space-right1 small quiet inline'>
-            Show examples in:
-          </div>
           <RoundedToggle
             short={!queryMatches.widescreen}
             options={languageOptions}
@@ -211,7 +196,7 @@ var App = React.createClass({
       </div>
 
       {/* Header */ }
-      <div className={`fill-dark dark bottom-shadow fixed-top ${queryMatches.tablet ? 'pad1y pad2x col6' : 'pad0 width16'}`}>
+      <div className={`fill-dark dark bottom-shadow fixed-top ${queryMatches.tablet ? 'pad1y pad2x col6' : 'pad0 width20'}`}>
         <a href='/' className={`active space-top1 space-left1 pin-topleft icon round dark pad0 ${brandClasses}`}></a>
         <div className={`strong small pad0
           ${queryMatches.mobile ? 'space-left3' : ''}

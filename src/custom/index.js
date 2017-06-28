@@ -51,11 +51,13 @@ function highlightTokens(str) {
  */
 module.exports.transformURL = function(value) {
   let parts = value.split(/\s+/);
+  let endpointPrefix = 'https://api.freshcom.io/v1';
+
   return {
     type: 'html',
     value: `<div class='endpoint dark fill-dark round '>
       <div class='round-left pad0y pad1x fill-lighten0 code small endpoint-method'>${parts[0]}</div>
-      <div class='pad0 code small endpoint-url'>${highlightTokens(parts[1])}</div>
+      <div class='pad0 code small endpoint-url'>${endpointPrefix}${highlightTokens(parts[1])}</div>
     </div>`
   };
 };
