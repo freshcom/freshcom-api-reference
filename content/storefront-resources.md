@@ -1,6 +1,37 @@
 ## Customer
 
-A Customer represents a single customer for your
+A Customer represents a single customer of your Storefront.
+
+**Localizable Attributes**: `customData`<br>
+**Filterable Attributes**: `status`, `label`<br>
+**Searchable Attributes**: `code`, `firstName`, `lastName`, `email`, `phoneNumber`
+
+
+Attribute                     | Type       | Description
+------------------------------|------------|-----------
+`code`                        | `String`   | A unique code for the Customer, you can assign any string. This code must be unique for each SKU.
+`status`                      | `String`   | One of `guest`, `member`, `suspended` or any other user defined status.
+`firstName`                   | `String`   |
+`lastName`                    | `String`   |
+`email`                       | `String`   | Email of the Customer, must be unique.
+`label`                       | `String`   | A user defined label for the Customer for filtering purpose.
+`displayName`                 | `String`   | Any other name for the Customer
+`phoneNumber`                 | `String`   |
+`description`                 | `String`   |
+`customData`                  | `Json`     |
+
+### Create a Customer
+
+To create a Customer you can use type of Access Token.
+
+
+
+
+### Get a Customer
+### Update a Customer
+### Delete a Customer
+### List Customers
+
 
 ## Charge
 
@@ -85,16 +116,16 @@ A Price represents a price for a specific Product Item. The Price resource allow
 1. **Fixed Price per Item**: This the most common way to price your item. For example if you are selling a T-shirt for $20 each, you can do the following:
 
     - set `chargeAmountCents: 2000`; and
-    - set `chargeUnit: 'EA'` since you are charging for each T-shirt; and
-    - set `orderUnit: 'EA'`, since the customer is ordering by each individual T-shirt.
+    - set `chargeUnit: "EA"` since you are charging for each T-shirt; and
+    - set `orderUnit: "EA"`, since the customer is ordering by each individual T-shirt.
 
 2. **Variable Price per Item**: This way of pricing is needed when each item can have a different price. For example if you are selling beef at $2/lb and each beef portion is not in the same weight. The weight range for each portion of beef is from 1.5 pounds to 2.5 pounds. In this case you can do the following:
 
     - set `chargeAmountCents: 200`; and
     - set `estimateAmountCents: 400` since the average weight of each beef portion is 2 pounds, so you can use `2 * 200 = 400` as the estimate to display for your customer so at least they have an idea of how much they will be paying; and
     - set `maximumAmountCents: 500` since the largest portion of beef is $5, you can set that as the maximum so that `authorizedAmountCents` in order will be calculated accordingly to authorize customer's card with the max amount in case they got the largest portion; and
-    - set `chargeUnit: 'LB'`, since you are charging by pounds
-    - set `orderUnit: 'EA'`, since the customer is ordering each portion of the beef not each pound of beef.
+    - set `chargeUnit: "LB"`, since you are charging by pounds
+    - set `orderUnit: "EA"`, since the customer is ordering each portion of the beef not each pound of beef.
 
 3. **Wholesale Price**: In addition to the above ways of pricing you can also set a wholesale price by setting the `minimumOrderQuantity`. For example if you sell each T-shirt at $20 but wants to cut the price to $15 per T-shirt if a customer buys 10 or more of them at once, then you can create two Price resources for that specified T-shirt Product Item then do the following:
 
@@ -109,22 +140,23 @@ A Price represents a price for a specific Product Item. The Price resource allow
 Attribute              | Type     | Description
 -----------------------|----------|-----------
 `name`                 | `String`   | A name for this price. For example "On Sale Price"
+`status`               | `String`   | One of `pending`, `active`, `expired`, `display_only`, `disabled` or any other user defined status
 `caption`              | `String`   | A short description for this price. For example "On Sale until 2017-05-01"
 `chargeAmountCents`    | `Integer`  | Amount to charge per quantity in `chargeUnit`
 `estimateAmountCents`  | `Integer`  | An estimate amount per quantity in `orderUnit`
-`maximumAmountCents`   | `Integer`  |
+`maximumAmountCents`   | `Integer`  | The amount to authorize when `estimateByDefault` is set to `true`
 `currencyCode`         | `String`   |
-`minimumOrderQuantity` | `Integer`  |
+`minimumOrderQuantity` | `Integer`  | The minimum amout of item to order for this price to be in effect
 `orderUnit`            | `String`   |
 `chargeUnit`           | `String`   |
-`publicOrderable`      | `String`   |
+`publicOrderable`      | `Boolean`  | If `true` then customer can use this price, set `false` to make this price dashboard only
 `label`                | `String`   |
-`estimateByDefault`    | `Boolean`  |
+`estimateByDefault`    | `Boolean`  | If `true` then the price is going to be an estimate only
 `taxOneRate`           | `Float`    |
 `taxTwoRate`           | `Float`    |
 `taxThreeRate`         | `Float`    |
-`startDate`            | `Datetime` |
-`endDate`              | `Datetime` |
+`startDate`            | `Datetime` | The start time of this price, if this is set then before the `startDate` the status of the price can only be `pending`
+`endDate`              | `Datetime` | The end time of this price, if this is set then after the `endDate` the price can only be `expired` or `disabled`
 
 
 Relationship                        | Type                     | Description
@@ -134,6 +166,10 @@ Relationship                        | Type                     | Description
 ## Order
 
 An Order represents a cart or a placed Order.
+
+Attribute                    | Type     | Description
+-----------------------------|----------|-----------
+`status`                     | `String` | One of `cart`, `open`, `closed` or any user defined order.
 
 ## Line Item
 

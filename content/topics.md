@@ -352,8 +352,6 @@ HTTP/1.1 200 OK
 
 ## Pagination
 
-## Sparse Fieldset
-
 ## Versioning
 
 ## Webhook
