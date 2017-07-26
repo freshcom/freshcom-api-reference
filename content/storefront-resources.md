@@ -3,34 +3,427 @@
 A Customer represents a single customer of your Storefront.
 
 **Localizable Attributes**: `customData`<br>
-**Filterable Attributes**: `status`, `label`<br>
-**Searchable Attributes**: `code`, `firstName`, `lastName`, `email`, `phoneNumber`
 
+Attribute                        | Type       | Description
+---------------------------------|------------|-----------
+`code`                           | `String`   | A unique code for the Customer, you can assign any string. This code must be unique for each SKU.
+`status`                         | `String`   | One of `anonymous`, `registered`, `suspended`, `deleted` or any other user defined status.
+`firstName`                      | `String`   |
+`lastName`                       | `String`   |
+`email`                          | `String`   | Email of the Customer, must be unique.
+`displayName`                    | `String`   | Any other name for the Customer
+`phoneNumber`                    | `String`   |
+`label`                          | `String`   | A user defined label for the Customer for filtering purpose.
+`deliveryAddressLineOne`         | `String`   |
+`deliveryAddressLineTwo`         | `String`   |
+`deliveryAddressLineProvince`    | `String`   |
+`deliveryAddressLinePostalCode`  | `String`   |
+`customData`                     | `Json`     |
+`locale`                         | `String`   |
+`insertedAt`                     | `Datetime` |
+`updatedAt`                      | `Datetime` |
 
-Attribute                     | Type       | Description
-------------------------------|------------|-----------
-`code`                        | `String`   | A unique code for the Customer, you can assign any string. This code must be unique for each SKU.
-`status`                      | `String`   | One of `guest`, `member`, `suspended` or any other user defined status.
-`firstName`                   | `String`   |
-`lastName`                    | `String`   |
-`email`                       | `String`   | Email of the Customer, must be unique.
-`label`                       | `String`   | A user defined label for the Customer for filtering purpose.
-`displayName`                 | `String`   | Any other name for the Customer
-`phoneNumber`                 | `String`   |
-`description`                 | `String`   |
-`customData`                  | `Json`     |
+#### Example Customer Object
+
+```json
+{
+  "type": "Customer",
+  "id": "33768c8a-a7e7-448e-ad2c-4279228b5bf4",
+  "attributes": {
+    "code": "C389DK",
+    "status": "member",
+    "firstName": "Roy",
+    "lastName": "Bao",
+    "email": "roy@outersky.com",
+    "displayName": "Roy",
+    "phoneNumber": "1234567890",
+    "label": null,
+    "deliveryAddressLineOne": "Unit 123",
+    "deliveryAddressLineTwo": "3535 Abc St",
+    "deliveryAddressProvince": "BC",
+    "deliveryAddressCity": "Vancouver",
+    "deliveryAddressCountryCode": "CAN",
+    "deliveryAddressPostalCode": "abcabc",
+    "customData": { "custom1": "hi" },
+    "locale": "en",
+    "insertedAt": "2017-04-01T07:43:29.516422",
+    "updatedAt": "2017-04-01T07:43:29.516422"
+  }
+}
+```
 
 ### Create a Customer
 
-To create a Customer you can use type of Access Token.
+This endpoint creates a new Customer object. You can use any type of Access Token for this endpoint. If the `status` is set to `anonymous` then **all fields are optional**. If `status` is set to `registered` then fields are required as specified below.
+
+**Fields**
+
+Attribute                        | Description
+---------------------------------|-----------
+`code`                           | A unique code for the Customer, you can assign any string.
+`status`                         | One of `anonymous`, `registered`, `suspended` or any other user defined status.
+`firstName`                      | _(required)_
+`lastName`                       | _(required)_
+`email`                          | _(required)_ Email of the Customer, must be unique.
+`password`                       | _(required)_
+`displayName`                    | Any other name for the Customer
+`phoneNumber`                    |
+`label`                          | A user defined label for the Customer for filtering purpose.
+`deliveryAddressLineOne`         |
+`deliveryAddressLineTwo`         |
+`deliveryAddressLineProvince`    |
+`deliveryAddressLinePostalCode`  |
+`customData`                     |
 
 
+**Returns**
+
+Returns a Customer object if the request succeeded.
 
 
-### Get a Customer
+```endpoint
+POST /customers
+```
+
+#### Example Request
+
+```http
+POST /v1/customers HTTP/1.1
+Host: api.freshcom.io
+Content-Type: application/vnd.api+json
+Authorization: Bearer {SAT}
+```
+
+```http
+{
+  "type": "Customer",
+  "attributes": {
+    "code": "C389DK",
+    "status": "member",
+    "firstName": "Roy",
+    "lastName": "Bao",
+    "email": "roy@outersky.com",
+    "password": "test1234",
+    "displayName": "Roy",
+    "phoneNumber": "1234567890",
+    "deliveryAddressLineOne": "Unit 123",
+    "deliveryAddressLineTwo": "3535 Abc St",
+    "deliveryAddressProvince": "BC",
+    "deliveryAddressCity": "Vancouver",
+    "deliveryAddressCountryCode": "CAN",
+    "deliveryAddressPostalCode": "abcabc",
+    "customData": { "custom1": "hi" }
+  }
+}
+```
+
+
+#### Example Response
+```http
+HTTP/1.1 201 Created
+```
+
+```json
+{
+  "type": "Customer",
+  "id": "33768c8a-a7e7-448e-ad2c-4279228b5bf4",
+  "attributes": {
+    "code": "C389DK",
+    "status": "member",
+    "firstName": "Roy",
+    "lastName": "Bao",
+    "email": "roy@outersky.com",
+    "displayName": "Roy",
+    "phoneNumber": "1234567890",
+    "label": null,
+    "deliveryAddressLineOne": "Unit 123",
+    "deliveryAddressLineTwo": "3535 Abc St",
+    "deliveryAddressProvince": "BC",
+    "deliveryAddressCity": "Vancouver",
+    "deliveryAddressCountryCode": "CAN",
+    "deliveryAddressPostalCode": "abcabc",
+    "customData": { "custom1": "hi" },
+    "locale": "en",
+    "insertedAt": "2017-04-01T07:43:29.516422",
+    "updatedAt": "2017-04-01T07:43:29.516422"
+  }
+}
+```
+
+
+### Retrieve a Customer
+
+This endpoint retrieve a previously created Customer. You must supply either a CAT or UAT in order to use this endpoint.
+
+**URL Parameters**
+
+Name                             | Description
+---------------------------------|-----------
+`id`                             | _(required)_ The Customer's ID
+
+
+**Query String Parameters**
+
+Key           | Description
+--------------|-----------
+`locale`      |
+`include`     |
+
+**Returns**
+
+Returns a Customer object if the request succeeded.
+
+
+#### Endpoint when using CAT
+
+```endpoint
+GET /customer
+```
+
+#### Example Request
+
+```http
+GET /v1/customer HTTP/1.1
+Host: api.freshcom.io
+Content-Type: application/vnd.api+json
+Authorization: Bearer {CAT}
+```
+
+#### Example Response
+
+```http
+HTTP/1.1 200 Ok
+```
+
+```json
+{
+  "type": "Customer",
+  "id": "33768c8a-a7e7-448e-ad2c-4279228b5bf4",
+  "attributes": {
+    "code": "C389DK",
+    "status": "member",
+    "firstName": "Roy",
+    "lastName": "Bao",
+    "email": "roy@outersky.com",
+    "displayName": "Roy",
+    "phoneNumber": "1234567890",
+    "label": null,
+    "deliveryAddressLineOne": "Unit 123",
+    "deliveryAddressLineTwo": "3535 Abc St",
+    "deliveryAddressProvince": "BC",
+    "deliveryAddressCity": "Vancouver",
+    "deliveryAddressCountryCode": "CAN",
+    "deliveryAddressPostalCode": "abcabc",
+    "customData": { "custom1": "hi" },
+    "locale": "en",
+    "insertedAt": "2017-04-01T07:43:29.516422",
+    "updatedAt": "2017-04-01T07:43:29.516422"
+  }
+}
+```
+
+#### Endpoint when using UAT
+
+```endpoint
+GET /customers/{id}
+```
+
+#### Example Request
+
+```http
+GET /v1/customers/33768c8a-a7e7-448e-ad2c-4279228b5bf4 HTTP/1.1
+Host: api.freshcom.io
+Content-Type: application/vnd.api+json
+Authorization: Bearer {UAT}
+```
+
+#### Example Response
+
+```http
+HTTP/1.1 200 Ok
+```
+
+```json
+{
+  "type": "Customer",
+  "id": "33768c8a-a7e7-448e-ad2c-4279228b5bf4",
+  "attributes": {
+    "code": "C389DK",
+    "status": "member",
+    "firstName": "Roy",
+    "lastName": "Bao",
+    "email": "roy@outersky.com",
+    "displayName": "Roy",
+    "phoneNumber": "1234567890",
+    "label": null,
+    "deliveryAddressLineOne": "Unit 123",
+    "deliveryAddressLineTwo": "3535 Abc St",
+    "deliveryAddressProvince": "BC",
+    "deliveryAddressCity": "Vancouver",
+    "deliveryAddressCountryCode": "CAN",
+    "deliveryAddressPostalCode": "abcabc",
+    "customData": { "custom1": "hi" },
+    "locale": "en",
+    "insertedAt": "2017-04-01T07:43:29.516422",
+    "updatedAt": "2017-04-01T07:43:29.516422"
+  }
+}
+```
+
 ### Update a Customer
+
+This endpoint updates a Customer object. You must supply either a CAT or UAT in order to use this endpoint. Any fields not provided will be left unchanged. If the `status` is set to `anonymous` then **all fields are optional**. If `status` is set to `registered` then fields are required as specified below. If the `status` was already `registered` then you can not update it to `anonymous` again.
+
+**URL Parameters**
+
+Name                             | Description
+---------------------------------|-----------
+`id`                             | _(required)_ The Customer's ID
+
+**Query String Parameters**
+
+Key           | Description
+--------------|-----------
+`locale`      |
+`include`     |
+
+**Fields**
+
+Attribute                        | Description
+---------------------------------|-----------
+`code`                           | A unique code for the Customer, you can assign any string.
+`status`                         | One of `anonymous`, `registered`, `suspended`, `deleted` or any other user defined status.
+`firstName`                      | _(required)_
+`lastName`                       | _(required)_
+`email`                          | _(required)_ Email of the Customer, must be unique.
+`password`                       | _(required)_
+`displayName`                    | Any other name for the Customer
+`phoneNumber`                    |
+`label`                          | A user defined label for the Customer for filtering purpose.
+`deliveryAddressLineOne`         |
+`deliveryAddressLineTwo`         |
+`deliveryAddressLineProvince`    |
+`deliveryAddressLinePostalCode`  |
+`customData`                     |
+
+**Returns**
+
+Returns the Customer object if the request succeeded. Returns an error if any of the fields are invalid.
+
+#### Endpoint
+
+```endpoint
+PATCH /customers/{id}
+```
+
+#### Example Request
+
+```http
+PATCH /v1/customers/{id} HTTP/1.1
+Host: api.freshcom.io
+Content-Type: application/vnd.api+json
+Authorization: Bearer {CAT}
+```
+
+```http
+{
+  "type": "Customer",
+  "id": "33768c8a-a7e7-448e-ad2c-4279228b5bf4",
+  "attributes": {
+    "code": "C389DK",
+    "status": "member",
+    "firstName": "Roy",
+    "lastName": "Bao",
+    "email": "roy@outersky.com",
+    "password": "test1234",
+    "displayName": "Roy",
+    "phoneNumber": "1234567890",
+    "deliveryAddressLineOne": "Unit 123",
+    "deliveryAddressLineTwo": "3535 Abc St",
+    "deliveryAddressProvince": "BC",
+    "deliveryAddressCity": "Vancouver",
+    "deliveryAddressCountryCode": "CAN",
+    "deliveryAddressPostalCode": "abcabc",
+    "customData": { "custom1": "hi" }
+  }
+}
+```
+
+
+#### Example Response
+```http
+HTTP/1.1 200 Ok
+```
+
+```json
+{
+  "type": "Customer",
+  "id": "33768c8a-a7e7-448e-ad2c-4279228b5bf4",
+  "attributes": {
+    "code": "C389DK",
+    "status": "member",
+    "firstName": "Roy",
+    "lastName": "Bao",
+    "email": "roy@outersky.com",
+    "displayName": "Roy",
+    "phoneNumber": "1234567890",
+    "label": null,
+    "deliveryAddressLineOne": "Unit 123",
+    "deliveryAddressLineTwo": "3535 Abc St",
+    "deliveryAddressProvince": "BC",
+    "deliveryAddressCity": "Vancouver",
+    "deliveryAddressCountryCode": "CAN",
+    "deliveryAddressPostalCode": "abcabc",
+    "customData": { "custom1": "hi" },
+    "locale": "en",
+    "insertedAt": "2017-04-01T07:43:29.516422",
+    "updatedAt": "2017-04-01T07:43:29.516422"
+  }
+}
+```
+
 ### Delete a Customer
+
+This endpoint permanently deletes a Customer. It cannot be undone. You must supply a UAT in order to use endpoint.
+
+**URL Parameters**
+
+Name                             | Description
+---------------------------------|-----------
+`id`                             | _(required)_ The Customer's ID
+
+**Returns**
+
+Returns nothing if the request succeeded. Customer with no order or with only Cart Order (i.e Order with `status` set to `cart`) will be marked for deletion and will be deleted within 24 hours. Customer with real orders will not actually be deleted, only their `status` will be set to `deleted` and they can still be retrieved through the API. This is intentional to keep track of the history of the Customer the corresponding Orders, however all of the Customer's payment information will be removed. Deleted Customer does not count toward your storage.
+
+#### Endpoint
+
+```endpoint
+DELETE /customers/{id}
+```
+
+#### Example Request
+
+```http
+DELETE /v1/customers/{id} HTTP/1.1
+Host: api.freshcom.io
+Content-Type: application/vnd.api+json
+Authorization: Bearer {UAT}
+```
+
+#### Example Response
+
+```http
+HTTP/1.1 204 No Content
+```
+
 ### List Customers
+
+Get a list of your Customers. Customer are order by descending creation time.
+
+**Filterable Attributes**: `status`, `label`<br>
+
+**Searchable Attributes**: `code`, `firstName`, `lastName`, `email`, `phoneNumber`
 
 
 ## Charge

@@ -178,7 +178,7 @@ Endpoints                         |
 `GET /v1/products`                | Only Product with status `active` will be returned
 `GET /v1/product_collections`     | Only Product Collection with status `active` will be returned
 `POST /v1/orders`                 | Only Order with status `cart` will be successfully created
-`GET /v1/orders/:id`              | Only order with status `cart` will be returned
+`GET /v1/orders/:id`              | Only Order with status `cart` will be returned
 
 
 
@@ -188,7 +188,7 @@ Endpoints                         |
 
 ## Custom Data
 
-FreshCom API allow you to add custom data to any resources you create. Custom Data can be any valid json object. Custom Data can be translated as well.
+FreshCom API allow you to add custom data to any resources you create. Custom Data can be any valid JSON object. Custom Data can be translated as well.
 
 #### Example Request for adding Custom Data
 
@@ -218,7 +218,7 @@ Authorization: Bearer {token}
 
 ## I18n
 
-FreshCom API provides full support for I18n. Resources that support i18n can be have their attributes in unlimited number of languages. The default language is `en` and language can be changed by setting the `locale` query parameter.
+FreshCom API provides full support for I18n. Resources that support i18n can be have their attributes in unlimited number of languages. The default language is `en` and language can be changed by setting the `locale` query parameter. Every resources have a `locale` attribute, its value will always match the `locale` query parameter that used to get that resource. The `locale` attribute can be useful for caching purpose so that client can know which language the resource is in.
 
 #### Example Request for creating resource with locale
 
@@ -251,7 +251,8 @@ HTTP/1.1 201 Created
     "id": "33768c8a-a7e7-448e-ad2c-4279228b5bf4",
     "type": "Sku",
     "attributes": {
-      "name": "Apple"
+      "name": "Apple",
+      "locale": "en"
     }
   }
 }
@@ -288,7 +289,8 @@ HTTP/1.1 200 OK
     "id": "33768c8a-a7e7-448e-ad2c-4279228b5bf4",
     "type": "Sku",
     "attributes": {
-      "name": "苹果"
+      "name": "苹果",
+      "locale": "zh-CN"
     }
   }
 }
@@ -314,7 +316,8 @@ HTTP/1.1 200 OK
     "id": "33768c8a-a7e7-448e-ad2c-4279228b5bf4",
     "type": "Sku",
     "attributes": {
-      "name": "Apple"
+      "name": "Apple",
+      "locale": "en"
     }
   }
 }
@@ -341,7 +344,8 @@ HTTP/1.1 200 OK
     "id": "33768c8a-a7e7-448e-ad2c-4279228b5bf4",
     "type": "Sku",
     "attributes": {
-      "name": "苹果"
+      "name": "苹果",
+      "locale": "zh-CN"
     }
   }
 }
