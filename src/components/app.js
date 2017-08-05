@@ -13,7 +13,7 @@ let slug = title => { slugger.reset(); return slugger.slug(title); };
 
 let languageOptions = [
   { title: 'HTTP',
-    short: 'http',
+    short: 'HTTP',
     value: 'http' },
   { title: 'cURL',
     short: 'cURL',

@@ -6,7 +6,7 @@ A Customer represents a single customer of your Storefront.
 
 Attribute                        | Type       | Description
 ---------------------------------|------------|-----------
-`code`                           | `String`   | A unique code for the Customer, you can assign any string. This code must be unique for each SKU.
+`code`                           | `String`   | A unique code for the Customer, you can assign any string.
 `status`                         | `String`   | One of `anonymous`, `registered`, `suspended`, `deleted` or any other user defined status.
 `firstName`                      | `String`   |
 `lastName`                       | `String`   |
@@ -421,7 +421,7 @@ HTTP/1.1 204 No Content
 
 Get a list of your Customers. Customer are order by descending creation time.
 
-**Filterable Attributes**: `status`, `label`<br>
+**Filterable Attributes**: `status`, `label`, `deliveryAddressCity`, `deliveryAddressCountryCode`, `deliveryAddressProvince`<br>
 
 **Searchable Attributes**: `code`, `firstName`, `lastName`, `email`, `phoneNumber`
 
@@ -561,8 +561,88 @@ Relationship                        | Type                     | Description
 An Order represents a cart or a placed Order.
 
 Attribute                    | Type     | Description
------------------------------|----------|-----------
-`status`                     | `String` | One of `cart`, `open`, `closed` or any user defined order.
+-----------------------------|------------|-----------
+`status`                     | `String`   | One of `cart`, `open`, `closed` or any user defined order.
+`code`                       | `String`   | A unique code for the Order.
+`label`                      | `String`   | A user defined label for the Customer for filtering purpose.
+`email`                      | `String`   |
+`firstName`                  | `String`   |
+`lastName`                   | `String`   |
+`phoneNumber`                | `String`   |
+`deliveryAddressLineOne`     | `String`   |
+`deliveryAddressLineTwo`     | `String`   |
+`deliveryAddressProvince`    | `String`   |
+`deliveryAddressCountryCode` | `String`   |
+`deliveryAddressPostalCode`  | `String`   |
+`billingAddressLineOne`      | `String`   |
+`billingAddressLineTwo`      | `String`   |
+`billingAddressProvince`     | `String`   |
+`billingAddressCountryCode`  | `String`   |
+`billingAddressPostalCode`   | `String`   |
+`subTotalCents`              | `Integer`  |
+`taxOneCents`                | `Integer`  |
+`taxTwoCents`                | `Integer`  |
+`taxThreeCents`              | `Integer`  |
+`grandTotalCents`            | `Integer`  |
+`paymentStatus`              | `String`   | One of `pending`, `error`, `paid`, `fully_refunded`, `partially_refunded`.
+`paymentGateway`             | `String`   | One of `online`, `in_person`.
+`paymentProcessor`           | `String`   | One of `stripe`, `paypal`.
+`paymentMethod`              | `String`   | One of `visa`, `mastercard`, `debit`, `cash`, `cheque` or any user defined method.
+`fulfillmentMethod`          | `String`   | One of `pickup` or `ship`
+`placedAt`                   | `Datetime` |
+
+
+Relationship                        | Type                            | Description
+------------------------------------|---------------------------------|-----------
+`customer`                          | `Customer`                      |
+`createdBy`                         | `User`                          | The user that created this Order if any. If its a Customer created Order then this relationship will be null.
+`charge`                            | `Charge`                        |
+
+### Create an Order
+
+This endpoint creates a new Order object. You can use any type of Access Token for this endpoint. If the status is set to anonymous then all fields are optional. If status is set to registered then fields are required as specified below.
+
+Attribute                    | Description
+-----------------------------|-----------------------
+`status`                     | If not provided, defaults to `cart`
+`code`                       |
+`label`                      |
+`email`                      | _(required)_
+`firstName`                  | _(required)_
+`lastName`                   | _(required)_
+`phoneNumber`                |
+`fulfillmentMethod`          | _(required)_ Can be either `ship` or `pickup`
+`deliveryAddressLineOne`     | Required if `fulfillmentMethod` is set to `ship`
+`deliveryAddressLineTwo`     | Required if `fulfillmentMethod` is set to `ship`
+`deliveryAddressProvince`    | Required if `fulfillmentMethod` is set to `ship`
+`deliveryAddressCountryCode` | Required if `fulfillmentMethod` is set to `ship`
+`deliveryAddressPostalCode`  | Required if `fulfillmentMethod` is set to `ship`
+`billingAddressLineOne`      |
+`billingAddressLineTwo`      |
+`billingAddressProvince`     |
+`billingAddressCountryCode`  |
+`billingAddressPostalCode`   |
+`paymentStatus`              | If not provided, defaults to `pending`
+`paymentGateway`             | _(required)_ Can be either `online` or `in_person`
+`paymentMethod`              | _(required)_
+
+
+Relationship       | Description
+-------------------|-------------
+customer           |
+
+
+### Retrieve an Order
+
+This endpoint retrieve a previously created Order. You must supply either a CAT or UAT in order to use this endpoint.
+
+
+### Update an Order
+
+This endpoint updates a previously created Order object. You must supply either a CAT or UAT in order to use this endpoint.
+
+### Delete an Order
+
 
 ## Line Item
 
