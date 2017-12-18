@@ -14,13 +14,15 @@ module.exports =
   fs.readFileSync('./content/introduction.md', 'utf8') + '\n' +
   '# TOPICS\n' +
   fs.readFileSync('./content/topics.md', 'utf8') + '\n' +
-  '# COMMON\n' +
-  fs.readFileSync('./content/common-resources.md', 'utf8') + '\n' +
+  '# IDENTITY\n' +
+  fs.readFileSync('./content/identity.md', 'utf8') + '\n' +
   '# STOREFRONT\n' +
-  fs.readFileSync('./content/storefront-resources.md', 'utf8') + '\n' +
-  '# INVENTORY\n' +
-  fs.readFileSync('./content/inventory-resources.md', 'utf8') + '\n' +
-  '# DISTRIBUTION\n' +
-  fs.readFileSync('./content/distribution-resources.md', 'utf8') + '\n' +
+  fs.readFileSync('./content/storefront.md', 'utf8') + '\n' +
+  '# CATALOGUE\n' +
+  fs.readFileSync('./content/catalogue.md', 'utf8') + '\n' +
+  '# GOODS\n' +
+  fs.readFileSync('./content/file-storage.md', 'utf8') + '\n' +
+  '# FILE STORAGE\n' +
+  fs.readFileSync('./content/distribution.md', 'utf8') + '\n' +
   '# Example\n' +
   fs.readFileSync('./content/example.md', 'utf8') + '\n';
