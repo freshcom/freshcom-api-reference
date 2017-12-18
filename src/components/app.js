@@ -1,8 +1,8 @@
 import React from 'react';
 import Navigation from './navigation';
+import PropTypes from 'prop-types';
 import Content from './content';
 import RoundedToggle from './rounded_toggle';
-import PureRenderMixin from 'react-pure-render/mixin';
 import GithubSlugger from 'github-slugger';
 import debounce from 'lodash.debounce';
 import { brandNames, brandClasses } from '../custom';
@@ -29,13 +29,13 @@ let debouncedReplaceState = debounce(hash => {
   window.history.replaceState('', '', hash);
 }, 100);
 
-var App = React.createClass({
-  mixins: [PureRenderMixin],
-  propTypes: {
-    content: React.PropTypes.string.isRequired,
-    ast: React.PropTypes.object.isRequired
-  },
-  getInitialState() {
+export default class App extends React.PureComponent {
+  static propTypes = {
+    content: PropTypes.string.isRequired,
+    ast: PropTypes.object.isRequired
+  }
+  constructor(props) {
+    super(props);
     var active = 'Introduction';
 
     if (process.browser) {
@@ -58,7 +58,7 @@ var App = React.createClass({
           active = headingForHash.children[0].value;
         }
       }
-      return {
+      this.state = {
         // media queryMatches
         mqls: mqls,
         // object of currently matched queries, like { desktop: true }
@@ -70,7 +70,7 @@ var App = React.createClass({
         showNav: false
       };
     } else {
-      return {
+      this.state = {
         mqls: { },
         queryMatches: {
           desktop: true
@@ -80,17 +80,17 @@ var App = React.createClass({
         showNav: false
       };
     }
-  },
-  toggleNav() {
+  }
+  toggleNav = () => {
     this.setState({ showNav: !this.state.showNav });
-  },
+  }
   componentDidMount() {
     this.mediaQueryChanged();
     this.onScroll = debounce(this.onScrollImmediate, 100);
     document.addEventListener('scroll', this.onScroll);
     this.onScrollImmediate();
-  },
-  onScrollImmediate() {
+  }
+  onScrollImmediate = () => {
     var sections = document.querySelectorAll('div.section');
     if (!sections.length) return;
     for (var i = 0; i < sections.length; i++) {
@@ -102,27 +102,27 @@ var App = React.createClass({
         return;
       }
     }
-  },
-  mediaQueryChanged() {
+  }
+  mediaQueryChanged = () => {
     this.setState({
       queryMatches: this.state.mqls.reduce((memo, q) => {
         memo[q.name] = q.query.matches;
         return memo;
       }, {})
     });
-  },
+  }
   componentWillUnmount() {
     this.state.mqls.forEach(q => q.removeListener(this.mediaQueryChanged));
     document.body.removeEventListener('scroll', this.onScroll);
-  },
-  onChangeLanguage(language) {
+  }
+  onChangeLanguage = (language) => {
     this.setState({ language }, () => {
       if (window.history) {
         window.history.pushState(null, null,
           `?${qs.stringify({ language: language.title })}${window.location.hash}`);
       }
     });
-  },
+  }
   componentDidUpdate(_, prevState) {
     if (prevState.activeSection !== this.state.activeSection) {
       // when the section changes, replace the hash
@@ -132,20 +132,20 @@ var App = React.createClass({
       // when the language changes, use the hash to set scroll
       window.location.hash = window.location.hash;
     }
-  },
-  navigationItemClicked(activeSection) {
+  }
+  navigationItemClicked = activeSection => {
     setTimeout(() => {
       this.setState({ activeSection });
     }, 10);
     if (!this.state.queryMatches.desktop) {
       this.toggleNav();
     }
-  },
-  toggleColumnMode() {
+  }
+  toggleColumnMode = () => {
     this.setState({
       columnMode: this.state.columnMode === 1 ? 2 : 1
     });
-  },
+  }
   render() {
     let ast = JSON.parse(JSON.stringify(this.props.ast));
     let { activeSection, queryMatches, showNav, columnMode } = this.state;
@@ -190,7 +190,7 @@ var App = React.createClass({
                 title={`Display as ${col1 ? 2 : 1} column`}
                 onClick={this.toggleColumnMode}
                 style={{ cursor: 'pointer' }}
-                className={`icon quiet caret-${col1 ? 'right' : 'left'} pad0 fill-darken0 round`}></a> : null}
+                className={`icon quiet caret-${col1 ? 'right' : 'left'} pad0 fill-darken0 round`} /> : null}
           </div>
         </div>
       </div>
@@ -222,6 +222,4 @@ var App = React.createClass({
 
     </div>);
   }
-});
-
-module.exports = App;
+}

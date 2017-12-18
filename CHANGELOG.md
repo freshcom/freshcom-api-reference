@@ -1,3 +1,39 @@
+# Change Log
+
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+<a name="1.0.8"></a>
+## [1.0.8](https://github.com/tmcw/docbox/compare/v1.0.7...v1.0.8) (2017-09-20)
+
+
+### Bug Fixes
+
+* **package:** update babel-eslint to version 8.0.0 ([e351f42](https://github.com/tmcw/docbox/commit/e351f42))
+
+
+
+<a name="1.0.7"></a>
+## [1.0.7](https://github.com/tmcw/docbox/compare/v1.0.6...v1.0.7) (2017-08-01)
+
+
+### Bug Fixes
+
+* **package:** update eslint to version 4.1.0 ([e2838e6](https://github.com/tmcw/docbox/commit/e2838e6))
+* **package:** update remark to version 8.0.0 ([f19be9c](https://github.com/tmcw/docbox/commit/f19be9c))
+
+
+
+<a name="1.0.6"></a>
+## [1.0.6](https://github.com/tmcw/docbox/compare/v1.0.5...v1.0.6) (2017-05-11)
+
+
+### Bug Fixes
+
+* **package:** update eslint-plugin-react to version 7.0.0 ([5657bb2](https://github.com/tmcw/docbox/commit/5657bb2))
+* **readme:** Correct demo location ([f118de4](https://github.com/tmcw/docbox/commit/f118de4)), closes [#25](https://github.com/tmcw/docbox/issues/25)
+
+
+
 <a name="1.0.5"></a>
 ## [1.0.5](https://github.com/tmcw/docbox/compare/v1.0.4...v1.0.5) (2017-03-18)
 
