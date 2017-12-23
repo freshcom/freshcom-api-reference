@@ -198,7 +198,7 @@ export default class App extends React.PureComponent {
       {/* Header */ }
       <div className={`fill-dark dark bottom-shadow fixed-top ${queryMatches.tablet ? 'pad1y pad2x col6' : 'pad0 width20'}`}>
         <a href='/' className={`active space-top1 space-left1 pin-topleft icon round dark pad0 ${brandClasses}`}></a>
-        <div className={`strong small pad0
+        <div style={{fontSize: '13px'}} className={`strong small pad0
           ${queryMatches.mobile ? 'space-left3' : ''}
           ${queryMatches.tablet ? 'space-left2' : 'space-left4 line-height15' }`}>
           {queryMatches.desktop ? brandNames.desktop :

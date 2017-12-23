@@ -125,3 +125,9 @@ body .prose blockquote {
   margin-left: 10px;
   vertical-align: middle;
 }
+
+small,
+.prose.small,
+.small {
+  font-size:14px;
+}
