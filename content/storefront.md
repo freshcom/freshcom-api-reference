@@ -1,18 +1,32 @@
-## Charge
-
-## Refund
-
-## Card
-
-## Stripe Account
-
 ## Order
 
-An Order represents a cart or a placed Order.
+An order represents a cart or a placed order. An order has three important status that is important to understand:
 
-Attribute                    | Type     | Description
+**Payment Status**
+
+Payment status is automatically managed by Freshcom, when a new payment is created for this order its payment status will be updated accordingly.
+
+- `pending` - When there is no payment for an order, or the payment is pending.
+- `partiallyAuthorized` - When the total authorized amount of all the payments of an order is less than the order's `authorizationTotalCents`.
+- `authorized`
+- `partiallyPaid` - When there is existing payment for the order but the total is less than the `grandTotalCents` of the order.
+- `paid`
+- `overPaid`
+- `partiallyRefunded`
+- `Refunded`
+
+**Fulfillment Status**
+
+- pending
+- fulfilled
+- discarded
+
+
+**Order Status**
+
+Attribute                    | Type       | Description
 -----------------------------|------------|-----------
-`status`                     | `String`   | One of `cart`, `open`, `closed` or any user defined order.
+`status`                     | `String`   | One of `cart`, `open`, `closed`, `cancelled` or any user defined order.
 `code`                       | `String`   | A unique code for the Order.
 `label`                      | `String`   | A user defined label for the Customer for filtering purpose.
 `email`                      | `String`   |
@@ -95,14 +109,14 @@ order as `opened`. User with other role can update the status freely as authoriz
 ### Delete an Order
 
 
-## Line Item
+## Order Line Item
 
 A Line Item represents a single item in the order.
 
 **Localizable Attributes**: `name`, `description`, `priceName`.
 
-Attribute                    | Type     | Description
------------------------------|----------|-----------
+Attribute                    | Type       | Description
+-----------------------------|------------|---------------
 `name`                       | `String`   |
 `printName`                  | `String`   | If the item relationship is defined, this attribute will always reflect the item's `printName` attribute and setting it has no effect.
 `description`                | `String`   |
@@ -138,3 +152,6 @@ Relationship                        | Type                     | Description
 `price`                             | Price                    |
 `item`                              | ProductItem              |
 
+## Unlock
+
+## Fulfillment

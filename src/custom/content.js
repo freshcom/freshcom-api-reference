@@ -20,9 +20,11 @@ module.exports =
   fs.readFileSync('./content/catalogue.md', 'utf8') + '\n' +
   '# CRM\n' +
   fs.readFileSync('./content/crm.md', 'utf8') + '\n' +
+  '# BALANCE\n' +
+  fs.readFileSync('./content/balance.md', 'utf8') + '\n' +
   '# GOODS\n' +
-  fs.readFileSync('./content/file-storage.md', 'utf8') + '\n' +
+  fs.readFileSync('./content/goods.md', 'utf8') + '\n' +
   '# FILE STORAGE\n' +
-  fs.readFileSync('./content/distribution.md', 'utf8') + '\n' +
+  fs.readFileSync('./content/file-storage.md', 'utf8') + '\n' +
   '# Example\n' +
   fs.readFileSync('./content/example.md', 'utf8') + '\n';
