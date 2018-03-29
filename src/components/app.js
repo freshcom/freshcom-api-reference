@@ -15,8 +15,8 @@ let languageOptions = [
   { title: 'HTTP',
     short: 'HTTP',
     value: 'http' },
-  { title: 'JS-SDK',
-    short: 'JS-SDK',
+  { title: 'JS',
+    short: 'JS',
     value: 'javascript' }
 ];
 

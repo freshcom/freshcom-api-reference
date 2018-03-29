@@ -39,7 +39,7 @@ freshcom.createToken(data)
 #### Example Request
 
 ```http
-POST /v1/token HTTP/1.1
+POST /v1/token
 Host: api.freshcom.io
 Content-Type: application/x-www-form-urlencoded
 ```
@@ -65,9 +65,7 @@ freshcom.createToken({
 
 ```http
 HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Cache-Control: no-store
-Pragma: no-cache
+Content-Type: application/json
 ```
 
 ```json
@@ -104,7 +102,7 @@ freshcom.createToken(data)
 #### Example Request
 
 ```http
-POST /v1/token HTTP/1.1
+POST /v1/token
 Host: api.freshcom.io
 Content-Type: application/x-www-form-urlencoded
 ```
@@ -130,7 +128,7 @@ freshcom.createToken({
 #### Example Request
 
 ```http
-POST /v1/token HTTP/1.1
+POST /v1/token
 Host: api.freshcom.io
 Content-Type: application/x-www-form-urlencoded
 ```
@@ -157,9 +155,7 @@ freshcom.createToken({
 
 ```http
 HTTP/1.1 200 OK
-Content-Type: application/json;charset=UTF-8
-Cache-Control: no-store
-Pragma: no-cache
+Content-Type: application/json
 ```
 
 ```json
@@ -198,10 +194,10 @@ Custom data are allowed for the following resource:
 - Account
 - Account Membership
 
-#### Example Request for adding custom data
+#### Example Request
 
 ```http
-PATCH /v1/stockables/33768c8a-a7e7-448e-ad2c-4279228b5bf4 HTTP/1.1
+PATCH /v1/stockables/33768c8a-a7e7-448e-ad2c-4279228b5bf4
 Host: api.freshcom.io
 Content-Type: application/vnd.api+json
 Authorization: Bearer {token}
@@ -210,10 +206,10 @@ Authorization: Bearer {token}
 ```javascript
 import freshcom from 'freshcom-sdk'
 
-freshcom.updateStockable("33768c8a-a7e7-448e-ad2c-4279228b5bf4", {
-  name: "Apple",
+freshcom.updateStockable('33768c8a-a7e7-448e-ad2c-4279228b5bf4', {
+  name: 'Apple',
   customData: {
-    kind: "Gala"
+    kind: 'Gala'
   }
 }).then(function (response) {
   console.log(response)
@@ -267,35 +263,38 @@ Freshcom API return errors according to the spec defined in [JSONAPI v1.0 Specif
 
 Freshcom API provides full support for internalization (i18n). Resources that support i18n can have their attributes in unlimited number of languages. To request or update a resource under a specific locale just set the `locale` query parameters.
 
-The response from most of the API endpoint will also contain a `meta` object which will have a `locale` key containing the locale of the response. This information can be useful for caching so that client can know which language the resource in the response is in.
+The response from most of the API endpoint will also contain a `meta` object which will have a `locale` key containing the locale of the response. This information can be useful for caching so that client can know which language the response is in.
 
 **Default locale**
 
-When creating a resource, the `locale` query parameter will be ignored and the resource will always be the created in the account's default locale. After the resource is created it can then be updated to have data in locale as normal using the `locale` query parameter.
+When creating a resource, the `locale` query parameter will be ignored and the resource will always be the created in the account's default locale. After the resource is created it can then be updated to have data in other locale using the `locale` query parameter.
 
-#### Example Request for updating resource with a different locale
+#### Example Request for Update
 ```http
-PATCH /v1/stockables/33768c8a-a7e7-448e-ad2c-4279228b5bf4?locale=zh-CN HTTP/1.1
+PATCH /v1/stockables/33768c8a-a7e7-448e-ad2c-4279228b5bf4?locale=zh-CN
 Host: api.freshcom.io
 Content-Type: application/vnd.api+json
 Authorization: Bearer {access_token}
 ```
 
-```json
-{
-  "data": {
-    "id": "33768c8a-a7e7-448e-ad2c-4279228b5bf4",
-    "type": "Stockable",
-    "attributes": {
-      "name": "苹果"
-    }
-  }
-}
+```javascript
+import freshcom from 'freshcom-sdk'
+
+freshcom.updateStockable('33768c8a-a7e7-448e-ad2c-4279228b5bf4', {
+  name: '苹果',
+}, {
+  locale: 'zh-CN'
+}).then(function (response) {
+  console.log(response)
+}).catch(function (response) {
+  console.log(response)
+})
 ```
 
-#### Example Response for updating resource with a different locale
+#### Example Response for Update
 ```http
 HTTP/1.1 200 OK
+Content-Type: application/json
 ```
 
 ```json
@@ -313,48 +312,31 @@ HTTP/1.1 200 OK
 }
 ```
 
-#### Example Response for getting resource with locale
+#### Example Request for Retrieve
 
 ```http
-GET /v1/skus/33768c8a-a7e7-448e-ad2c-4279228b5bf4?locale=en HTTP/1.1
+GET /v1/stockables/33768c8a-a7e7-448e-ad2c-4279228b5bf4?locale=zh-CN
 Host: api.freshcom.io
 Content-Type: application/vnd.api+json
-Authorization: Bearer jwt.token
+Authorization: Bearer {access_token}
 ```
 
-#### Example Response for getting resource with locale
+```javascript
+import freshcom from 'freshcom-sdk'
+
+freshcom.retrieveStockable('33768c8a-a7e7-448e-ad2c-4279228b5bf4', {
+  locale: 'zh-CN'
+}).then(function (response) {
+  console.log(response)
+}).catch(function (response) {
+  console.log(response)
+})
+```
+
+#### Example Response for Retrieve
 ```http
 HTTP/1.1 200 OK
-```
-
-```json
-{
-  "meta": {
-    "locale": "en"
-  },
-  "data": {
-    "id": "33768c8a-a7e7-448e-ad2c-4279228b5bf4",
-    "type": "Stockable",
-    "attributes": {
-      "name": "Apple"
-    }
-  }
-}
-```
-
-#### Example Request for getting resource with a different locale
-
-```http
-GET /v1/skus/33768c8a-a7e7-448e-ad2c-4279228b5bf4?locale=zh-CN HTTP/1.1
-Host: api.freshcom.io
-Content-Type: application/vnd.api+json
-Authorization: Bearer jwt.token
-```
-
-#### Example Response for getting resource with a different locale
-
-```http
-HTTP/1.1 200 OK
+Content-Type: application/json
 ```
 
 ```json
@@ -371,7 +353,6 @@ HTTP/1.1 200 OK
   }
 }
 ```
-
 
 ## Includes
 
