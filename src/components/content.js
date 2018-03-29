@@ -33,7 +33,7 @@ function chunkifyAST(ast, language) {
     }
     chunk.forEach(node => {
       if (node.type === 'code') {
-        if (node.lang === 'json' || node.lang === 'http' || node.lang === 'html') {
+        if (node.lang === 'json' || node.lang === 'html') {
           right.push(node);
         } else if (node.lang === language) {
           if (language === 'curl') {

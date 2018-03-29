@@ -1,6 +1,6 @@
 ## Account
 
-An Account represents a business or an app that uses the FreshCom API and pay to FreshCom using the same billing information. When you as the developer sign up for FreshCom, an Account is automatically created for you. You can created more accounts as needed, for example if you are a freelancer that builds e-commerce app for different clients then you can create an account for each of your client to keep track of billing.
+An account represents a business or an app that uses the Freshcom API and pay to Freshcom using the same billing information. When you as the developer sign up for Freshcom, an account is automatically created for you. You can created more accounts as needed, for example if you are a freelancer that builds e-commerce app for different clients then you can create an account for each of your client to keep track of billing.
 
 Attribute              | Type     | Description
 -----------------------|----------|-----------
@@ -17,7 +17,7 @@ Relationship                        | Type                     | Description
 
 ## User
 
-An User represents a single user that uses the FreshCom API. User is different than customer, this represents you the developer.
+An User represents a single user that uses the Freshcom API. User is different than customer, this represents you the developer.
 
 Attribute              | Type     | Description
 -----------------------|----------|-----------
@@ -49,7 +49,7 @@ Relationship                        | Type                     | Description
 
 ## External File
 
-An External File represents a single file stored in a third party storage service (As of now FreshCom only uses AWS S3, but this may change in the future).
+An External File represents a single file stored in a third party storage service (As of now Freshcom only uses AWS S3, but this may change in the future).
 
 Attribute              | Type     | Description
 -----------------------|----------|-----------
