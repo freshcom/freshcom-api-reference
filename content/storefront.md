@@ -25,7 +25,7 @@ Payment status is automatically managed by Freshcom, when a new payment is creat
 **Order Status**
 
 Attribute                    | Type       | Description
------------------------------|------------|-----------
+-----------------------------|------------|-------------|
 `status`                     | `String`   | One of `cart`, `open`, `closed`, `cancelled` or any user defined order.
 `code`                       | `String`   | A unique code for the Order.
 `label`                      | `String`   | A user defined label for the Customer for filtering purpose.
@@ -57,7 +57,7 @@ Attribute                    | Type       | Description
 
 
 Relationship                        | Type                            | Description
-------------------------------------|---------------------------------|-----------
+------------------------------------|---------------------------------|-------------|
 `customer`                          | `Customer`                      |
 `createdBy`                         | `User`                          | The user that created this Order if any. If its a Customer created Order then this relationship will be null.
 `charge`                            | `Charge`                        |
@@ -67,7 +67,7 @@ Relationship                        | Type                            | Descript
 This endpoint creates a new Order object. You can use any type of Access Token for this endpoint. If the status is set to anonymous then all fields are optional. If status is set to registered then fields are required as specified below.
 
 Attribute                    | Description
------------------------------|-----------------------
+-----------------------------|-----------------------|
 `status`                     | If not provided, defaults to `cart`
 `code`                       |
 `label`                      |
@@ -91,7 +91,7 @@ Attribute                    | Description
 
 
 Relationship       | Description
--------------------|-------------
+-------------------|-------------|
 customer           |
 
 
@@ -116,7 +116,7 @@ A Line Item represents a single item in the order.
 **Localizable Attributes**: `name`, `description`, `priceName`.
 
 Attribute                    | Type       | Description
------------------------------|------------|---------------
+-----------------------------|------------|---------------|
 `name`                       | `String`   |
 `printName`                  | `String`   | If the item relationship is defined, this attribute will always reflect the item's `printName` attribute and setting it has no effect.
 `description`                | `String`   |
@@ -147,11 +147,7 @@ Attribute                    | Type       | Description
 
 
 Relationship                        | Type                     | Description
-------------------------------------|--------------------------|-----------
+------------------------------------|--------------------------|-------------|
 `order`                             | Order                    |
 `price`                             | Price                    |
 `item`                              | ProductItem              |
-
-## Unlock
-
-## Fulfillment

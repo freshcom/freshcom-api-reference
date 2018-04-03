@@ -79,11 +79,7 @@ Content-Type: application/json
 
 ### Obtain a UAT
 
-To obtain a user access token for the first time, the client must make a POST request to `/v1/token` passing in the user's credentials.
-
-The response that the client get back will contain a user access token and a user refresh token. The client should store both tokens, user access token should only be stored in memory, user refresh token can be stored in cookie or local storage if the client needs remember the user.
-
-By default the user access token that the client get back will be for the default account of that user. However, a user may have access to multiple accounts, to request a user access token for a specific account the client need to set the `scope` parameter accordingly: `scope=aid:{account_id}`. The `account_id` can be found through the Freshcom Dashboard.
+To obtain a user access token for the first time, the client must make a POST request to `/v1/token` passing in the user's credentials and set the scope to `scope=aid:{account_id}`. If the scope is not set or the `account_id` provided is invalid you will get a invalid request response. Your `account_id` can be found through the Freshcom Dashboard.
 
 The user access token will be valid for 1 hour, before it expires it is the client's responsiblity to get a new user access token using the user refresh token through the same endpoint as above.
 
@@ -108,7 +104,7 @@ Content-Type: application/x-www-form-urlencoded
 ```
 
 ```http
-grant_type=password&scope=aid:aid-test-827ae785-1502-4489-8a97-609c4840169f&username=test1@example.com&password=A3ddj3w
+grant_type=password&scope=aid:aid-test-827ae785-1502-4489-8a97-609c4840169f&username=test@example.com&password=supersecurepassword
 ```
 
 ```javascript
@@ -117,7 +113,8 @@ import freshcom from 'freshcom-sdk'
 freshcom.createToken({
   username: 'test@example.com',
   password: 'supersecurepassword',
-  grant_type: 'password'
+  grant_type: 'password',
+  scope: 'aid:{account_id}'
 }).then(function (token) {
   console.log(token)
 }).catch(function (error) {
@@ -167,20 +164,126 @@ Content-Type: application/json
 }
 ```
 
+### Two Factor Auth
+
+Freshcom also supports two factor authentication (TFA) for business that require extra security for their customer. To enable TFA you must set `authMethod` on the user resource that you want to enable TFA to `tfa_email` or `tfa_sms`. You can also set the `defaultAuthMethod` on the account resource to make user use a specific authentication method by default.
+
+After you enable TFA for a user, obtaining UAT require an one time password (OTP) in addition to the user's username and password. The process for obtaining UAT for a TFA-enabled user is as follow:
+
+1. Try obtain UAT like normal by providing just the username and password.
+
+2. Freshcom API will return an error, with a special header `X-Freshcom-OTP: required; auth_method=tfa_sms`. This means an OTP has been sent using that specific method. If `auth_method=tfa_email` then OTP is sent using email, if using `auth_method=tfa_sms` then OTP is sent using text messages.
+
+3. Prompt the user to enter the OTP they received.
+
+4. Obtain UAT by sending the username, password and an additional header `X-Freshcom-OTP: {otp}`.
+
+5. If everything is valid, Freshcom API will return the UAT.
+
+**Note:** If the username and password the user provide is not valid, then Freshcom API will return an error but there will be no `X-Freshcom-OTP` header. That header will only be set if the usernamd and password provided in step 1 is valid.
+
+#### Example Request for step 1
+
+```http
+POST /v1/token
+Host: api.freshcom.io
+Content-Type: application/x-www-form-urlencoded
+```
+
+```http
+grant_type=password&scope=aid:aid-test-827ae785-1502-4489-8a97-609c4840169f&username=test@example.com&password=supersecurepassword
+```
+
+```javascript
+import freshcom from 'freshcom-sdk'
+
+freshcom.createToken({
+  username: 'test@example.com',
+  password: 'supersecurepassword',
+  grant_type: 'password',
+  scope: 'aid:{account_id}'
+}).then(function (token) {
+  console.log(token)
+}).catch(function (error) {
+  console.log(error)
+})
+```
+
+#### Example Response for step 1
+
+```http
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+X-Freshcom-OTP: required; auth_method=tfa_sms
+```
+
+```json
+{
+  "error": "invalid_request",
+  "error_description": "OTP is invalid, please set OTP using the X-Freshcom-OTP header."
+}
+```
+
+#### Example Request for step 4
+
+```http
+POST /v1/token
+Host: api.freshcom.io
+Content-Type: application/x-www-form-urlencoded
+X-Freshcom-OTP: {OTP}
+```
+
+```http
+grant_type=password&scope=aid:aid-test-827ae785-1502-4489-8a97-609c4840169f&username=test@example.com&password=supersecurepassword
+```
+
+```javascript
+import freshcom from 'freshcom-sdk'
+
+freshcom.createToken({
+  username: 'test@example.com',
+  password: 'supersecurepassword',
+  grant_type: 'password',
+  otp: '{otp}'
+}).then(function (token) {
+  console.log(token)
+}).catch(function (error) {
+  console.log(error)
+})
+```
+
+#### Example Response for step 4
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ",
+  "token_type": "bearer",
+  "expires_in": 3600,
+  "refresh_token": "urt-test-827ae785-1502-4489-8a97-609c4840168f"
+}
+```
+
+
 ## Authorization
 
 Freshcom uses role based authorization, each user of Freshcom is assigned a single role and each role have a specific set of permissions. You are free to change the user's role through the API or Freshcom Dashboard. Right now there is no way to create new role or to change the permissin of each role, however such feature may be available in the future. Here is a list of avilable roles:
 
-- guest
-- customer
-- support_specialist
-- marketing_specialist
-- goods_specialist
-- business_analyst
-- developer
-- administrator
+- `customer`
+- `support_specialist`
+- `marketing_specialist`
+- `goods_specialist`
+- `business_analyst`
+- `developer`
+- `administrator`
 
-Through out the API reference we may refer to a user with a specific role simply as "{role} user" where {role} can be any of the available roles. For example a guest user means a user with role `guest` and a customer user means a user with role `customer`.
+If a client is using a PAT to access the API on behalf of a user then we consider the user to have a `guest` role.
+
+Through out the API reference we may refer to a user with a specific role simply as "{role} user" where {role} can be any of the available roles. For example a customer user means a user with role `customer` and a developer user means a user with role `developer`.
 
 **Note**: Freshcom API also has have a resource named "Customer", it is not to be confused with a user with `customer` role. Please see [customer](http://example.com) for more detail.
 
@@ -207,9 +310,9 @@ Authorization: Bearer {token}
 import freshcom from 'freshcom-sdk'
 
 freshcom.updateStockable('33768c8a-a7e7-448e-ad2c-4279228b5bf4', {
-  name: 'Apple',
+  name: 'Warp Drive',
   customData: {
-    kind: 'Gala'
+    size: 'Micro'
   }
 }).then(function (response) {
   console.log(response)
@@ -224,9 +327,9 @@ freshcom.updateStockable('33768c8a-a7e7-448e-ad2c-4279228b5bf4', {
     "id": "33768c8a-a7e7-448e-ad2c-4279228b5bf4",
     "type": "Stockable",
     "attributes": {
-      "name": "Apple",
+      "name": "Warp Drive",
       "customData": {
-        "kind": "Gala"
+        "size": "Micro"
       }
     }
   }
@@ -259,6 +362,89 @@ Freshcom API return errors according to the spec defined in [JSONAPI v1.0 Specif
 }
 ```
 
+## Event
+
+Freshcom API fires event for most of the endpoints. These events can be used to trigger [notification](#notification) like [webhook](#webook), [email](#email) or [SMS](#sms). Each event in Freshcom is identified with its name in the format of `{module}.{resource}.{action}.{result}` for example `identity.account.updated.success`.
+
+Each event also comes with associated event data. The event data comes in different format depending on the triggering action.
+
+If the triggering action is a webhook call then the event data will be the same as any Freshcom API response with a few meta info added. If additional information is needed it is up your implementation to make additional request to Freshcom API to get it.
+
+If the triggering action is to send an email or SMS then the event data will be in a deserialize format with as much information as we think fit, since in this case you do not have control over what additional data to retrieve. We use a deserialized format so that you can easily access the information you need in your email or SMS template like `{{account.name}}` instead of `{{data.attributes.name}}`.
+
+
+#### Example Request to Webhook
+
+```http
+POST {your_webhook_path}
+Host: {your_webhook_host}
+Content-Type: application/vnd.api+json
+```
+
+```http
+{
+  "meta": {
+    "locale": "en",
+    "eventName": "identity.account.updated.success"
+  },
+  "data": {
+    "type": "Account",
+    "id": "e407d0dc-58d4-48ff-a70f-c6e022e028f1",
+    "attributes": {
+      "status": "active",
+      "name": "Starship Manufacturing",
+      "companyName": "Starship Manufacturing Inc",
+      "mode": "live",
+      "defaultLocale": "zh-CN",
+      "defaultAuthMethod": "simple",
+      "websiteUrl": "https://example.com",
+      "supportEmail": "",
+      "techEmal": "",
+      "testAccountId": "9fdd716d-7222-46e4-aaeb-0d798063c463",
+      "apiVersion": "20180331",
+      "caption": null,
+      "description": null,
+      "customData": {}
+    }
+  }
+}
+```
+
+
+#### Example Event Data for Email and SMS
+
+```json
+{
+  "meta": {
+    "locale": "en"
+  },
+  "account": {
+    "id": "e407d0dc-58d4-48ff-a70f-c6e022e028f1",
+    "status": "active",
+    "name": "Starship Manufacturing",
+    "companyName": "Starship Manufacturing Inc",
+    "mode": "live",
+    "defaultLocale": "zh-CN",
+    "defaultAuthMethod": "simple",
+    "websiteUrl": "https://example.com",
+    "supportEmail": "",
+    "techEmal": "",
+    "testAccountId": "9fdd716d-7222-46e4-aaeb-0d798063c463",
+    "apiVersion": "20180331",
+    "caption": null,
+    "description": null,
+    "customData": {}
+  },
+  "user": {
+    "name": "Captain Good",
+    "email": "cg@example.com",
+    "phoneNumber": "1234567890"
+  }
+}
+```
+
+
+
 ## Internalization
 
 Freshcom API provides full support for internalization (i18n). Resources that support i18n can have their attributes in unlimited number of languages. To request or update a resource under a specific locale just set the `locale` query parameters.
@@ -277,11 +463,23 @@ Content-Type: application/vnd.api+json
 Authorization: Bearer {access_token}
 ```
 
+```http
+{
+  "data": {
+    "id": "33768c8a-a7e7-448e-ad2c-4279228b5bf4",
+    "type": "Stockable",
+    "attributes": {
+      "name": "曲速引擎"
+    }
+  }
+}
+```
+
 ```javascript
 import freshcom from 'freshcom-sdk'
 
 freshcom.updateStockable('33768c8a-a7e7-448e-ad2c-4279228b5bf4', {
-  name: '苹果',
+  name: '曲速引擎',
 }, {
   locale: 'zh-CN'
 }).then(function (response) {
@@ -306,7 +504,7 @@ Content-Type: application/json
     "id": "33768c8a-a7e7-448e-ad2c-4279228b5bf4",
     "type": "Stockable",
     "attributes": {
-      "name": "苹果"
+      "name": "曲速引擎"
     }
   }
 }
@@ -348,7 +546,7 @@ Content-Type: application/json
     "id": "33768c8a-a7e7-448e-ad2c-4279228b5bf4",
     "type": "Stockable",
     "attributes": {
-      "name": "苹果"
+      "name": "曲速引擎"
     }
   }
 }

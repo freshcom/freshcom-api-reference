@@ -11,7 +11,7 @@ However even if you only have one Product Item you must still use a Product, sin
 **Localizable Attributes**: `name`, `shortName` `printName`, `specification`, `storageDescription`, `caption`,  `description`
 
 Attribute                     | Type     | Description
-------------------------------|----------|-----------
+------------------------------|----------|-------------|
 `status`                      | `String`   |
 `name`                        | `String`   |
 `printName`                   | `String`   | Name to print when printing. To accomndate most receipt printer it is recommended to limit this field to at most 64 characters.
@@ -22,49 +22,13 @@ Attribute                     | Type     | Description
 
 
 Relationship                        | Type                     | Description
-------------------------------------|--------------------------|-----------
+------------------------------------|--------------------------|--------------|
 `avatar`                            | ExternalFile             |
 `items`                             | Array< ProductItem >       |
 
 ## Product Collection
 
 A Product Collection represents a collection of Product.
-
-## Product Item
-
-A Product Item represents a single item for sale. An item can be either an Unlockable or a SKU. The Product Item resources are used together with the Product resource to reprepsent items for sale.
-
-**Localizable Attributes**: `name`, `shortName` `printName`, `specification`, `storageDescription`, `caption`,  `description`
-
-Attribute              | Type     | Description
-----------------------------|----------|-----------
-`code`                        | `String`   | A unique code for the SKU, you can assign any string. This code must be unique for each SKU.
-`status`                      | `String`   |
-`name`                        | `String`   |
-`shortName`                   | `String`   |
-`printName`                   | `String`   | Name to print when printing. To accomndate most receipt printer it is recommended to limit this field to at most 64 characters.
-`sourceQuantity`              | `Integer`  | How many of source are considered 1 Product Item.
-`primary`                     | `Boolean`  | Whether this is the primary item for the Product.
-`maximumPublicOrderQuantity`  | `Integer`  | The maximum quantity a Customer can order.
-`specification`               | `String`     |
-`caption`                     | `String`   | A short description of the Product Item.
-`description`                 | `String`     | A detail description of the Product Item.
-
-
-**Localizable Relationships**: `avatar`
-
-Relationship                        | Type                            | Description
-------------------------------------|---------------------------------|-----------
-`sku`                               | `Sku`                           |
-`unlockable`                        | `Unlockable`                    |
-`source`                            | `Sku`, `Unlockable`             |
-`product`                           | `Product`                         |
-`avatar`                            | `ExternalFile`                    |
-`prices`                            | `Array<Price>`                    |
-`externalFileCollections`           | `Array<ExternalFileCollection>`   |
-
-**Notes**: Exactly one of `sku` and `unlockable` can be set. If one is set, the other must be nil.
-
 
 ## Price
 
@@ -95,7 +59,7 @@ A Price represents a price for a specific Product Item. The Price resource allow
 **Localizable Attributes**: `name`, `caption`.
 
 Attribute              | Type     | Description
------------------------|----------|-----------
+-----------------------|----------|-------------|
 `name`                 | `String`   | A name for this price. For example "On Sale Price"
 `status`               | `String`   | One of `pending`, `active`, `expired`, `display_only`, `disabled` or any other user defined status
 `caption`              | `String`   | A short description for this price. For example "On Sale until 2017-05-01"
@@ -117,5 +81,5 @@ Attribute              | Type     | Description
 
 
 Relationship                        | Type                     | Description
-------------------------------------|--------------------------|-----------
+------------------------------------|--------------------------|-------------|
 `item`                              | ProductItem              | The Product Item that this price is for.

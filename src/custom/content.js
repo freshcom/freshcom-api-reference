@@ -22,6 +22,8 @@ module.exports =
   fs.readFileSync('./content/crm.md', 'utf8') + '\n' +
   '# BALANCE\n' +
   fs.readFileSync('./content/balance.md', 'utf8') + '\n' +
+  '# FULFILLMENT\n' +
+  fs.readFileSync('./content/fulfillment.md', 'utf8') + '\n' +
   '# GOODS\n' +
   fs.readFileSync('./content/goods.md', 'utf8') + '\n' +
   '# FILE STORAGE\n' +

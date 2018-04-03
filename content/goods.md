@@ -1,6 +1,4 @@
-## Branch
-
-## SKU
+## Stockable
 
 An SKU (Stock Keeping Unit) represents a single unique item in your inventory. Many of its attributes are optional and its up to you on how you use it.
 
@@ -110,6 +108,6 @@ client.listWobbles(function(err, wobbles) {
 ```
 
 
-## Stock Batch
+## Unlockable
 
-## Stock Transfer
+## Depositable
