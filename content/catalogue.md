@@ -1,34 +1,432 @@
 ## Product
 
-A Product represents a number of Product Items grouped together. Generally there are two ways to use the Product resource:
+A product represents goods for sell. You can think of product as goods + prices. There are 5 kinds of product:
 
-1. The first way to use the Product resource is to group similar Product Item together. For example if you are selling a T-shirt, you can use Product Item to represent a single size of the T-shirt. If you have 3 different sizes (S, M, L) then you can create three Product Items, but you will only have one Product to group them beacuse to the Customer the three Product Items represents the same Product. When the customer buys the Product they will need to choose which Product Item.
+- `simple` - A simple product is associated with a single goods.
 
-2. The second way to use the Product resource is to group unrelated Product Item together as a bundle or combo. For example if you are selling an apple and an orange together as a fruit combo, you can create two Product Item, one for apple one for orange. You can then use one Product that contains those two Product Items and the Product is the fruit combo you are selling. When the customer buys the Product they are buying all of the corresponding Product Item.
+- `withVariants` - A product with variants consist of multiple child product, and each of the child product is of kind `variant`. A product with variants is basically a container for its variants. You want to use this kind of product if you want your customer to select only one of the variants. Each variant can be individually priced but the product with variants itself can not be priced. For example you have a T-shirt for sell, then the T-shirt itself will be a product with variants and each individual size will be the variant.
 
-However even if you only have one Product Item you must still use a Product, since a Product Item must belong to a Product.
+- `variant` - Variant of a product with variants.
 
-**Localizable Attributes**: `name`, `shortName` `printName`, `specification`, `storageDescription`, `caption`,  `description`
+- `combo` - A product combo consit of multiple child product, and each of the child product is of kind `item`. You want to use this kind of product if you want your customer to buy all the item inside the combo at once.
 
-Attribute                     | Type     | Description
-------------------------------|----------|-------------|
-`status`                      | `String`   |
-`name`                        | `String`   |
-`printName`                   | `String`   | Name to print when printing. To accomndate most receipt printer it is recommended to limit this field to at most 64 characters.
-`itemMode`                    | `String`   | Can be either `any` or `all` specifying whether Customer can buy any of the Product Item or buy all of the Product Item of this Product
-`specification`               | `String`     |
-`caption`                     | `String`   | A short description of the Product.
-`description`                 | `String`     | A detail description of the Product.
+- `item` - Item of a product combo
+
+**Attributes**
+
+Name                          | Type       | Description
+------------------------------|------------|-------------|
+`status`                      | `String`   | The status of the product, can be one of `draft`, `active` or `disabled`.
+`code`                        | `String`   | _(user-defined)_ A unique code for the product.
+`kind`                        | `String`   | The kind of product, can be one of `simple`, `withVariants`, `variant`, `combo` or `item`.
+`name`                        | `String`   | _(localizable)_ The name of the product
+`label`                       | `String`   | _(user-defined)_ A label for the product.
+`nameSync`                    | `String`   | The method of name sync to use, can be one of `disabled` or `syncWithGoods`. If the value is `syncWithGoods` then the name will be always synced with the associated goods.
+`shortName`                   | `String`   | _(user-defined)_ _(localizable)_ A short name for the product.
+`printName`                   | `String`   | _(localizable)_ The name to print on a receipt.
+`sortIndex`                   | `Integer`  | The sort order of this product. Whenever multiple products are returned, they will be sorted according to their `sortIndex` in descending order.
+`goodsQuantity`               | `Integer`  | The number of goods to be considered as one product.
+`primary`                     | `Boolean`  | If the product is of kind `variant` then this indicate whether it is the primary variant.
+`maximumPubilcOrderQuantity`  | `Integer`  | The maximum ordering quantity for user with role other than `supportSpecialist`, `developer` or `administrator`.
+`autoFulfill`                 | `Boolean`  | The default value for the `autoFulfill` attribute of a order line item when created with this product.
+`caption`                     | `String`   | _(user-defined)_ _(localizable)_ A short description of the this product.
+`description`                 | `String`   | _(user-defined)_ _(localizable)_ A long description of the this product.
+`customData`                  | `Object`   | _(user-defined)_ _(localizable)_
+
+**Relationships**
+
+Name               | Type                     | Description
+-------------------|--------------------------|--------------|
+`avatar`           | `File`                   |
+`parent`           | `Product`                |
+`fileCollections`  | `Array<FileCollection>`  |
+`goods`            | `Stockable`, `Unlockable` or `Depositable`|
+`prices`           | `Array<Price>`           |
+`defaultPrice`     | `Price`                  | The price with the loweset `minimumOrderQuantity`.
+
+#### Example Response
+
+```json
+{
+  "data": {
+    "id": "9fc8ee53-906f-48bd-a392-8b0709301699",
+    "type": "Product",
+    "attributes": {
+      "status": "draft",
+      "code": "P001",
+      "kind": "simple",
+      "name": "Warp Drive",
+      "label": null,
+      "nameSync": "syncWithGoods",
+      "printName": null,
+      "sortIndex": 1000,
+      "goodsQuantity": 1,
+      "primary": false,
+      "maximumPubilcOrderQuantity": 5,
+      "autoFulfill": false,
+      "caption": null,
+      "description": null,
+      "customData": {}
+    },
+    "relationships": {
+      "avatar": {
+        "data": {
+          "id": "74b901b2-32f9-4e3b-8d4d-4eca2360550c",
+          "type": "File"
+        }
+      },
+      "fileCollections": {
+        "data": []
+      },
+      "parent": {
+        "data": null
+      },
+      "goods": {
+        "data": {
+          "id": "5e9240ff-0885-4327-a1e7-f46f3fdb3f74",
+          "type": "Stockable"
+        }
+      },
+      "prices": {
+        "data": [
+          {
+            "id": "58183c45-bb3d-429b-a4fb-273490ad32a4",
+            "type": "Price"
+          },
+          {
+            "id": "5e9240ff-0885-4327-a1e7-f46f3fdb3f74",
+            "type": "Price"
+          }
+        ]
+      },
+      "defaultPrice": {
+        "data": {
+          "id": "58183c45-bb3d-429b-a4fb-273490ad32a4",
+          "type": "Price"
+        }
+      }
+    }
+  }
+}
+```
+
+### Create a product
+
+Use this endpoint to create a product.
+
+**Authorization**
+
+Authorized roles: `marketingSpecialist`, `developer` or `administrator`
+
+**Attributes**
+
+Name                          | Type       | Description
+------------------------------|------------|-------------|
+`code`                        | `String`   | A unique code for the product.
+`kind`                        | `String`   | _(required)_ Can be one of `simple`, `withVariants`, `variant`, `combo` or `item`. If set to `variant` or `item` then the `parent` relationship must be set appropriately.
+`name`                        | `String`   | Required if `nameSync` is `disabled`.
+`label`                       | `String`   | A label for the code.
+`nameSync`                    | `String`   | _(default: `disabled`)_ The method of name sync to use, can be `disabled` or `syncWithGoods`.
+`shortName`                   | `String`   | A short name for the product.
+`printName`                   | `String`   | The name to print on a receipt. If not provided, defaults to the same value as `name`. To accomndate most receipt printer it is recommended to limit this field to at most 64 characters.
+`sortIndex`                   | `Integer`  | _(default:`1000`)_
+`goodsQuantity`               | `Integer`  | _(default:`1`)_ The number of goods to be considered as one product.
+`primary`                     | `Boolean`  | _(default:`false`)_ If this product is of kind `variant`, indicates whether it is the primary variant.
+`maximumPubilcOrderQuantity`  | `Integer`  | _(default: `999`)_ Maximum ordering quantity for user with role other than `supportSpecialist`, `developer` or `administrator`.
+`autoFulfill`                 | `Boolean`  | _(default: `false`)_ The default value for the `autoFulfill` attribute of a order line item when created with this product.
+`caption`                     | `String`   | A short description of the this product.
+`description`                 | `String`   | A long description of the this product.
+`customData`                  | `Object`   |
+
+**Relationships**
+
+Name               | Type                     | Description
+-------------------|--------------------------|--------------|
+`avatar`           | `File`                   |
+`parent`           | `Product`                | Required if the product kind is set to `variant` or `item`.
+`goods`            | `Stockable`, `Unlockable` or `Depositable`| _(required)_
+
+**Events**
+
+Name: `catalogue.product.create.success`
+
+Event Data         | Type                     | Description
+-------------------|--------------------------|--------------|
+`product`          | `Product`                | The created product
+`avatar`           | `File`                   |
+`parent`           | `Product`                |
+`fileCollections`  | `Array<FileCollection>`  |
+`goods`            | `Stockable`, `Unlockable` or `Depositable`|
+`prices`           | `Array<Price>`           |
+`defaultPrice`     | `Price`                  | The price with the loweset `minimumOrderQuantity`.
+
+**Returns**
+
+Returns the created product.
+
+#### Definition
+
+```endpoint
+POST /products
+```
+
+#### Example Request
+
+```http
+POST /v1/products
+Host: api.freshcom.io
+Content-Type: application/vnd.api+json
+Authorization: Bearer {access_token}
+```
+
+```http
+{
+  "data": {
+    "type": "Product",
+    "attributes": {
+      "code": "P001",
+      "kind": "simple",
+      "nameSync": "syncWithGoods"
+    },
+    "relationships": {
+      "avatar": {
+        "data": {
+          "id": "74b901b2-32f9-4e3b-8d4d-4eca2360550c",
+          "type": "File"
+        }
+      },
+      "goods": {
+        "data": {
+          "id": "5e9240ff-0885-4327-a1e7-f46f3fdb3f74",
+          "type": "Stockable"
+        }
+      }
+    }
+  }
+}
+```
+
+```javascript
+import freshcom from 'freshcom-sdk'
+
+freshcom.createProduct({
+  code: 'P001',
+  kind: 'simple',
+  nameSync: 'syncWithGoods',
+  avatar: {
+    id: '74b901b2-32f9-4e3b-8d4d-4eca2360550c',
+    type: 'File'
+  },
+  goods: {
+    id: '5e9240ff-0885-4327-a1e7-f46f3fdb3f74',
+    type: 'Stockable'
+  }
+}).then(function (response) {
+  console.log(response)
+}).catch(function (response) {
+  console.log(response)
+})
+```
+
+#### Example Response
+
+```http
+HTTP/1.1 201 Created
+Content-Type: application/json
+```
+
+```json
+{
+  "meta": {
+    "locale": "en"
+  },
+  "data": {
+    "id": "9fc8ee53-906f-48bd-a392-8b0709301699",
+    "type": "Product",
+    "attributes": {
+      "status": "draft",
+      "code": "P001",
+      "kind": "simple",
+      "name": "Warp Drive",
+      "label": null,
+      "nameSync": "syncWithGoods",
+      "printName": null,
+      "sortIndex": 1000,
+      "goodsQuantity": 1,
+      "primary": false,
+      "maximumPubilcOrderQuantity": 999,
+      "autoFulfill": false,
+      "caption": null,
+      "description": null,
+      "customData": {}
+    },
+    "relationships": {
+      "avatar": {
+        "data": {
+          "id": "74b901b2-32f9-4e3b-8d4d-4eca2360550c",
+          "type": "File"
+        }
+      },
+      "fileCollections": {
+        "data": []
+      },
+      "parent": {
+        "data": null
+      },
+      "goods": {
+        "data": {
+          "id": "5e9240ff-0885-4327-a1e7-f46f3fdb3f74",
+          "type": "Stockable"
+        }
+      },
+      "prices": {
+        "data": []
+      },
+      "defaultPrice": {
+        "data": null
+      }
+    }
+  }
+}
+```
+
+### Retrieve a product
+
+Use this endpoint to retrieve a product.
+
+**Authorization**
+
+Authorized roles: all
+
+Only user with role `marketingSpecialist`, `developer` or `administrator` can retrieve product with any status. All other role can only retrieve product with status `active`.
+
+**Parameters**
+
+Name               | Type      | Description
+-------------------|-----------|-------|
+`id`               | `String`  | The product ID.
+
+**Returns**
+
+The target product.
+
+#### Definition
+
+```endpoint
+POST /products/{id}
+```
+
+#### Example Request
+
+```http
+GET /v1/products/4665c136-1448-4e04-a959-5358828f4feb
+Host: api.freshcom.io
+Content-Type: application/vnd.api+json
+Authorization: Bearer {access_token}
+```
+
+```javascript
+import freshcom from 'freshcom-sdk'
+
+freshcom.retrieveProduct('9fc8ee53-906f-48bd-a392-8b0709301699').then(function (response) {
+  console.log(response)
+}).catch(function (response) {
+  console.log(response)
+})
+```
+
+#### Example Response
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+
+```json
+{
+  "meta": {
+    "locale": "en"
+  },
+  "data": {
+    "id": "9fc8ee53-906f-48bd-a392-8b0709301699",
+    "type": "Product",
+    "attributes": {
+      "status": "draft",
+      "code": "P001",
+      "kind": "simple",
+      "name": "Warp Drive",
+      "label": null,
+      "nameSync": "syncWithGoods",
+      "printName": null,
+      "sortIndex": 1000,
+      "goodsQuantity": 1,
+      "primary": false,
+      "maximumPubilcOrderQuantity": 999,
+      "autoFulfill": false,
+      "caption": null,
+      "description": null,
+      "customData": {}
+    },
+    "relationships": {
+      "avatar": {
+        "data": {
+          "id": "74b901b2-32f9-4e3b-8d4d-4eca2360550c",
+          "type": "File"
+        }
+      },
+      "fileCollections": {
+        "data": []
+      },
+      "parent": {
+        "data": null
+      },
+      "goods": {
+        "data": {
+          "id": "5e9240ff-0885-4327-a1e7-f46f3fdb3f74",
+          "type": "Stockable"
+        }
+      },
+      "prices": {
+        "data": []
+      },
+      "defaultPrice": {
+        "data": null
+      }
+    }
+  }
+}
+```
+
+### Update a product
 
 
-Relationship                        | Type                     | Description
-------------------------------------|--------------------------|--------------|
-`avatar`                            | ExternalFile             |
-`items`                             | Array< ProductItem >       |
+### Delete a product
+
+
+### List products
+
 
 ## Product Collection
 
-A Product Collection represents a collection of Product.
+A product collection represents a collection of Product.
+
+### Create a product collection
+
+### Retrieve a product collection
+
+### Update a product collection
+
+### Delete a product collection
+
+## Product Collection Membership
+
+### Create a membership
+
+### Update a membership
+
+### Delete a membership
+
+### List memberships
 
 ## Price
 
@@ -83,3 +481,12 @@ Attribute              | Type     | Description
 Relationship                        | Type                     | Description
 ------------------------------------|--------------------------|-------------|
 `item`                              | ProductItem              | The Product Item that this price is for.
+
+### Create a price
+
+
+### Update a price
+
+
+### Delete a price
+

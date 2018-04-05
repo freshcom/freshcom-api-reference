@@ -150,12 +150,12 @@ export default class App extends React.PureComponent {
     return (<div className='container unlimiter'>
 
       {/* Content background */ }
-      {(!col1 && !queryMatches.mobile) && <div className={`fixed-top fixed-right ${queryMatches.desktop && 'space-left20'}`}>
+      {(!col1 && !queryMatches.mobile) && <div className={`fixed-top fixed-right ${queryMatches.desktop && 'space-left24'}`}>
         <div className='fill-light col6 pin-right'></div>
       </div>}
 
       {/* Desktop nav */ }
-      {queryMatches.desktop && <div className='space-top5 scroll-styled overflow-auto pad1 width20 sidebar fixed-left fill-dark dark'>
+      {queryMatches.desktop && <div className='space-top5 scroll-styled overflow-auto pad1 width24 sidebar fixed-left fill-dark dark'>
         <Navigation
           navigationItemClicked={this.navigationItemClicked}
           activeSection={activeSection}
@@ -163,7 +163,7 @@ export default class App extends React.PureComponent {
       </div>}
 
       {/* Content */ }
-      <div className={`${queryMatches.desktop && 'space-left20'}`}>
+      <div className={`${queryMatches.desktop && 'space-left24'}`}>
         <div className={col1 ? 'col8 margin1' : ''}>
           <Content
             leftClassname={col1 ? 'space-bottom4 pad2x prose clip' : 'space-bottom8 col6 pad2x prose clip'}
@@ -174,7 +174,7 @@ export default class App extends React.PureComponent {
       </div>
 
       {/* Language toggle */ }
-      <div className={`fixed-top ${queryMatches.desktop && 'space-left20'}`}>
+      <div className={`fixed-top ${queryMatches.desktop && 'space-left24'}`}>
         <div className={`events fill-light bottom-shadow pad1 ${col1 ? '' : 'col6 pin-topright'} ${queryMatches.tablet ? 'dark fill-blue' : ''} ${queryMatches.mobile ? 'space-top5 fixed-topright' : ''}`}>
           <RoundedToggle
             short={!queryMatches.widescreen}
@@ -193,9 +193,9 @@ export default class App extends React.PureComponent {
       </div>
 
       {/* Header */ }
-      <div className={`fill-dark dark bottom-shadow fixed-top ${queryMatches.tablet ? 'pad1y pad2x col6' : 'pad0 width20'}`}>
+      <div className={`fill-dark dark bottom-shadow fixed-top ${queryMatches.tablet ? 'pad1y pad2x col6' : 'pad0 width24'}`}>
         <a href='/' className={`active space-top1 space-left1 pin-topleft icon round dark pad0 ${brandClasses}`}></a>
-        <div style={{fontSize: '13px'}} className={`strong small pad0
+        <div style={{fontSize: '13px', minHeight: '40px'}} className={`strong small pad0
           ${queryMatches.mobile ? 'space-left3' : ''}
           ${queryMatches.tablet ? 'space-left2' : 'space-left4 line-height15' }`}>
           {queryMatches.desktop ? brandNames.desktop :

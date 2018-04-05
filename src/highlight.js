@@ -14,7 +14,7 @@ hljs.registerLanguage('http', json);
 hljs.registerLanguage('python', python);
 hljs.registerLanguage('xml', xml);
 hljs.registerLanguage('javascript', javascript);
-hljs.registerLanguage('json', json);
+hljs.registerLanguage('json', javascript);
 hljs.registerLanguage('objc', objectivec);
 hljs.registerLanguage('swift', swift);
 hljs.registerLanguage('java', java);

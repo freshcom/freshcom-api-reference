@@ -3,7 +3,7 @@
 **Localizable Attributes**: `customData`<br>
 
 Attribute                        | Type       | Description
----------------------------------|------------|-----------
+---------------------------------|------------|-----------|
 `code`                           | `String`   | A unique code for the Customer, you can assign any string.
 `status`                         | `String`   | One of `anonymous`, `guest`, `registered`, `suspended`, `deleted` or any other user defined status.
 `firstName`                      | `String`   |
@@ -46,7 +46,7 @@ This endpoint creates a new Customer object. You can use any type of Access Toke
 **Fields**
 
 Attribute                        | Description
----------------------------------|-----------
+---------------------------------|-----------|
 `code`                           | A unique code for the Customer, you can assign any string.
 `status`                         | One of `guest`, `registered`, `suspended` or any other user defined status.
 `firstName`                      | _(required)_

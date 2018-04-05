@@ -274,10 +274,10 @@ Content-Type: application/json
 Freshcom uses role based authorization, each user of Freshcom is assigned a single role and each role have a specific set of permissions. You are free to change the user's role through the API or Freshcom Dashboard. Right now there is no way to create new role or to change the permissin of each role, however such feature may be available in the future. Here is a list of avilable roles:
 
 - `customer`
-- `support_specialist`
-- `marketing_specialist`
-- `goods_specialist`
-- `business_analyst`
+- `supportSpecialist`
+- `marketingSpecialist`
+- `goodsSpecialist`
+- `businessAnalyst`
 - `developer`
 - `administrator`
 
@@ -368,7 +368,7 @@ Freshcom API fires event for most of the endpoints. These events can be used to 
 
 Each event also comes with associated event data. The event data comes in different format depending on the triggering action.
 
-If the triggering action is a webhook call then the event data will be the same as any Freshcom API response with a few meta info added. If additional information is needed it is up your implementation to make additional request to Freshcom API to get it.
+If the triggering action is a webhook call then the event data will be the same as any Freshcom API response with a few meta info added. If additional information is needed it is up to your implementation to make additional request to Freshcom API to get it.
 
 If the triggering action is to send an email or SMS then the event data will be in a deserialize format with as much information as we think fit, since in this case you do not have control over what additional data to retrieve. We use a deserialized format so that you can easily access the information you need in your email or SMS template like `{{account.name}}` instead of `{{data.attributes.name}}`.
 
@@ -443,11 +443,12 @@ Content-Type: application/vnd.api+json
 }
 ```
 
+## Includes
 
 
 ## Internalization
 
-Freshcom API provides full support for internalization (i18n). Resources that support i18n can have their attributes in unlimited number of languages. To request or update a resource under a specific locale just set the `locale` query parameters.
+Freshcom API provides full support for internalization (i18n). Resources that support i18n can have their attributes in unlimited number of languages. Attributes that can be localized is marked with _(localizable)_ in the resource's attributes table. To request or update a resource under a specific locale just set the `locale` query parameters. If your also request contain the `include` query parameter for loading related resources then the related resources will also be returned in the requested locale.
 
 The response from most of the API endpoint will also contain a `meta` object which will have a `locale` key containing the locale of the response. This information can be useful for caching so that client can know which language the response is in.
 
@@ -552,12 +553,6 @@ Content-Type: application/json
 }
 ```
 
-## Includes
-
-
-
 ## Pagination
 
 ## Versioning
-
-## Webhook

@@ -6,7 +6,7 @@
  */
 module.exports.brandNames = {
   desktop: 'Freshcom API Reference',
-  tablet: 'Wobble API Docs',
+  tablet: 'Freshcom API',
   mobile: 'API Docs'
 };
 
