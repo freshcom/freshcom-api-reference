@@ -103,7 +103,7 @@ Use this endpoint to create an order/cart. When creating an order all attributes
 
 Authorized roles: all
 
-Only customer with role `supportSpecialist`, `developer` or `administrator` can set the `customer` relationship.
+Only user with role `supportSpecialist`, `developer` or `administrator` can set the `customer` relationship.
 
 **Attributes**
 
@@ -247,8 +247,8 @@ Use this endpoint to retrieve a previously created order. You must provide the I
 
 Authorized roles: all
 
-- Guest user can only retrieve order that is not assicated with any customer. Trying to retrieve other order will result in 404.
-- Only user with role `supportSpecialist`, `developer` or `administrator` can retrieve order that belongs other customer. All other user can only retrieve order the belongs to their associated customer.
+- Guest user can only retrieve order that is not assicated with any customer.
+- User with role other than `supportSpecialist`, `businessAnalyst`, `developer` or `administrator` can only retrieve order that belongs to their associated customer.
 
 **Parameters**
 
@@ -344,9 +344,13 @@ Use this endpoint to update a previously created order. You must provide the ID 
 
 **Authorization**
 
-Authorized roles: `guest`, `customer`, `supportSpecialist`, `developer` and `administrator`
+Authorized roles: all
 
-Guest and customer user can update the `status` to `opened` only if the `grantTotalCents` is `0`, otherwise they must create a payment which will automatically update the target order's `status` to `opened`. Guest and customer user can not update the `status` to anything other than `opened`. Please see our guide on [placing order](http://example.com).
+User with role other than `supportSpecialist`, `developer` and `administrator` can only do the following:
+
+- They can only update an order with status `cart`.
+- They can update the `status` to `opened` only if the order's `grandTotalCents` is `0`.
+- They can not update the `status` to anything other than `opened`.
 
 **Attributes**
 
@@ -501,13 +505,13 @@ Use this endpoint to delete an order. Only order with `cart` status can be delet
 
 ### List orders
 
-Use this endpoint to list some or all orders. By default only order with status `cart` will be returned.
+Use this endpoint to list some or all orders. By default only order with status `opened` will be returned.
 
 **Authorization**
 
-Authorized roles: `customer`, `supportSpecialist`, `developer` and `administrator`
+Authorized roles: all
 
-Only user with role `supportSpecialist`, `developer` or `administrator` can list order that belongs to other customer. All other role can only list order that belongs to their associated customer.
+User with role other than `supportSpecialist`, `businessAnalyst`, `developer` and `administrator` can only list order that belongs to their associated customer.
 
 **Parameters**
 
@@ -764,8 +768,7 @@ Use this endpoint to create a line item.
 
 Authorized roles: all
 
-- Only user with role `supportSpecialist`, `developer` or `administrator` can create line item for order in any status. All other role can only create line item for order in `cart` status.
-
+- User with role other than `supportSpecialist`, `developer` or `administrator` can only create line item for order with `cart` status.
 - Only user with role `supportSpecialist`, `developer` or `administrator` can set `chargeQuantity` and `isEstimate`.
 
 **Parameters**
@@ -779,7 +782,7 @@ Name               | Type      | Description
 Name                               | Type       | Description
 -----------------------------------|------------|---------------|
 `code`                             | `String`   |
-`name`                             | `String`   | _(required)_
+`name`                             | `String`   | Required if `product` is not provided.
 `label`                            | `String`   |
 `printName`                        | `String`   |
 `orderQuantity`                    | `Integer`  | If not provided, defaults to `1`
@@ -953,8 +956,7 @@ Use this endpoint to update a line item.
 
 Authorized roles: all
 
-- Only user with role `supportSpecialist`, `developer` or `administrator` can update line item for order in any status. All other role can only update line item for order in `cart` status.
-
+- User with role other than `supportSpecialist`, `developer` or `administrator` can only update line item for order with `cart` status.
 - Only user with role `supportSpecialist`, `developer` or `administrator` can set `chargeQuantity` and `isEstimate`.
 
 **Parameters**
@@ -1123,7 +1125,7 @@ Use this endpoint to delete a order line item.
 
 Authorized roles: all
 
-Only user with role `supportSpecialist`, `developer` or `administrator` can delete line item for order in any status. All other role can only delete line item for order in `cart` status.
+User with role other than `supportSpecialist`, `developer` or `administrator` can only delete line item for order with `cart` status.
 
 **Parameters**
 

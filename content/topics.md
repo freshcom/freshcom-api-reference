@@ -4,6 +4,40 @@ The Freshcom API is organized around [REST](http://en.wikipedia.org/wiki/Represe
 
 The Freshcom API tries to follow [JSONAPI v1.0 Specification](http://jsonapi.org/) as much as possible. It is recommended you briefly read through the spec to understand the general format of the API. If you find any of our endpoint that does not comply with [JSONAPI v1.0 Specification](http://jsonapi.org/) please open an issue [here](http://github.com) and we will address it as soon as possible.
 
+```javascript
+// 1. Create a access token using a administrator's refresh token
+freshcom.createAndSetAccessToken({
+  refresh_token: 'urt-test-galskerjalkjear',
+  grant_type: 'refresh_token'
+}).then(function () {
+  // 3. Create a stockable goods
+  return freshcom.createStockable({
+    name: 'My starship',
+    unitOfMeasure: 'EA'
+  })
+}).then(function (response) {
+  // 4. Create a product
+  return freshcom.createProduct({
+    kind: 'kind',
+    nameSync: 'syncWithGoods',
+    goods: { id: response.data.id, type: 'Stockable' }
+  })
+}).then(function (response) {
+  // 5. Create a price for the product
+  return freshcom.createPrice({
+    name: 'Regular Price',
+    chargeAmountCents: 50000,
+    chargeUnit: 'EA',
+    product: { id: response.data.id, type: 'Product' }
+  })
+}).then(function (response) {
+  // 6. Launch the product
+  return freshcom.updateProduct(response.data.product.id, {
+    status: 'active'
+  })
+})
+```
+
 ## Authentication
 
 The Freshcom API handles authentication through OAuth2. The client must first obtain an access token using a resource owner's credential or refresh token, then authenticate each request by sending the access token in the HTTP `Authorization` header.
