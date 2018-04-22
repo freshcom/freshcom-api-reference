@@ -1662,57 +1662,35 @@ Content-Type: application/json
 
 ## Price
 
-A price represents a price for a specific product. The price resource allow you to price your product in many ways:
+A price represents a price for a specific product. The price resource allow you to price your product in many ways, please see our guide on pricing your product for more details.
 
-1. **Fixed price per Item**: This the most common way to price your item. For example if you are selling a T-shirt for $20 each, you can do the following:
+When a Customer add the item to their Order, by default Freshcom will use the lowest price with `publicOrderable: true` that matches the `minimumOrderQuantity`.
 
-    - set `chargeAmountCents: 2000`; and
-    - set `chargeUnit: "EA"` since you are charging for each T-shirt; and
-    - set `orderUnit: "EA"`, since the customer is ordering by each individual T-shirt.
-
-2. **Variable price per Item**: This way of pricing is needed when each item can have a different price. For example if you are selling beef at $2/lb and each beef portion is not in the same weight. The weight range for each portion of beef is from 1.5 pounds to 2.5 pounds. In this case you can do the following:
-
-    - set `chargeAmountCents: 200`; and
-    - set `estimateAmountCents: 400` since the average weight of each beef portion is 2 pounds, so you can use `2 * 200 = 400` as the estimate to display for your customer so at least they have an idea of how much they will be paying; and
-    - set `maximumAmountCents: 500` since the largest portion of beef is $5, you can set that as the maximum so that `authorizedAmountCents` in order will be calculated accordingly to authorize customer's card with the max amount in case they got the largest portion; and
-    - set `chargeUnit: "LB"`, since you are charging by pounds
-    - set `orderUnit: "EA"`, since the customer is ordering each portion of the beef not each pound of beef.
-
-3. **Wholesale price**: In addition to the above ways of pricing you can also set a wholesale price by setting the `minimumOrderQuantity`. For example if you sell each T-shirt at $20 but wants to cut the price to $15 per T-shirt if a customer buys 10 or more of them at once, then you can create two price resources for that specified T-shirt Product Item then do the following:
-
-    - set `minimumOrderQuantity: 0` and `chargeAmountCents: 2000` for one of the price; and
-    - set `minimumOrderQuantity: 10` and `chargeAmountCents: 1000` for the other price.
-
-  When a Customer add the item to their Order, by default Freshcom will use the lowest price with `publicOrderable: true` that matches the `minimumOrderQuantity`.
-
-
-**Localizable Attributes**: `name`, `caption`.
-
-Attribute              | Type     | Description
------------------------|----------|-------------|
-`name`                 | `String`   | A name for this price. For example "On Sale Price"
-`status`               | `String`   | One of `pending`, `active`, `expired`, `display_only`, `disabled` or any other user defined status
-`caption`              | `String`   | A short description for this price. For example "On Sale until 2017-05-01"
-`chargeAmountCents`    | `Integer`  | Amount to charge per quantity in `chargeUnit`
-`estimateAmountCents`  | `Integer`  | An estimate amount per quantity in `orderUnit`
-`maximumAmountCents`   | `Integer`  | The amount to authorize when `estimateByDefault` is set to `true`
-`currencyCode`         | `String`   |
-`minimumOrderQuantity` | `Integer`  | The minimum amout of item to order for this price to be in effect
-`orderUnit`            | `String`   |
-`chargeUnit`           | `String`   |
-`publicOrderable`      | `Boolean`  | If `true` then customer can use this price, set `false` to make this price dashboard only
-`label`                | `String`   |
-`estimateByDefault`    | `Boolean`  | If `true` then the price is going to be an estimate only
-`taxOneRate`           | `Float`    |
-`taxTwoRate`           | `Float`    |
-`taxThreeRate`         | `Float`    |
-`startDate`            | `Datetime` | The start time of this price, if this is set then before the `startDate` the status of the price can only be `pending`
-`endDate`              | `Datetime` | The end time of this price, if this is set then after the `endDate` the price can only be `expired` or `disabled`
+Attribute                      | Type       | Description
+-------------------------------|------------|-------------|
+`name`                         | `String`   | _(localizable)_ A name for the price.
+`status`                       | `String`   | The status of the price, can be one of `pending`, `active`, `expired`, `disabled`.
+`caption`                      | `String`   | _(user-defined)_ _(localizable)_ A short description for this price. For example "On Sale until 2017-05-01"
+`chargeAmountCents`            | `Integer`  | Amount to charge per quantity in `chargeUnit`.
+`estimateAveragePercentage`    | `Integer`  | The percentage for calculating the sub total of an order line item if it is an estimate.
+`estimateMaximumPercentage`    | `Integer`  | The percentage for calculating the authorization amount of an order line item it is an estimate.
+`currencyCode`                 | `String`   |
+`minimumOrderQuantity`         | `Integer`  | The minimum quantity of item to order for this price to be in effect.
+`orderUnit`                    | `String`   |
+`chargeUnit`                   | `String`   |
+`publicOrderable`              | `Boolean`  | If `true` then customer can use this price, set `false` to make this price dashboard only
+`label`                        | `String`   |
+`estimateByDefault`            | `Boolean`  | If `true` then the price is going to be an estimate only
+`taxOneRate`                   | `Float`    |
+`taxTwoRate`                   | `Float`    |
+`taxThreeRate`                 | `Float`    |
+`startDate`                    | `Datetime` | The start time of this price, if this is set then before the `startDate` the status of the price can only be `pending`
+`endDate`                      | `Datetime` | The end time of this price, if this is set then after the `endDate` the price can only be `expired` or `disabled`
 
 
-Relationship                        | Type                     | Description
-------------------------------------|--------------------------|-------------|
-`item`                              | ProductItem              | The Product Item that this price is for.
+Relationship      | Type       | Description |
+------------------|------------|-------------|
+`product`         | Product    | The target product of the price.
 
 ### Create a price
 
