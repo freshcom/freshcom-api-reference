@@ -1,1 +1,4 @@
 node_modules/
+lib/
+bundle.js
+index.html
