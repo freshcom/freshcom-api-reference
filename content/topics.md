@@ -113,11 +113,13 @@ Content-Type: application/json
 
 ### Obtain a UAT
 
-To obtain a user access token for the first time, the client must make a POST request to `/v1/token` passing in the user's credentials and set the scope to `scope=aid:{account_id}`. If the scope is not set or the `account_id` provided is invalid you will get a invalid request response. Your `account_id` can be found through the Freshcom Dashboard.
+To obtain a user access token for the first time, the client must make a POST request to `/v1/token` passing in the user's credentials and set the scope to `aid:{account_id}`.
 
 The user access token will be valid for 1 hour, before it expires it is the client's responsiblity to get a new user access token using the user refresh token through the same endpoint as above.
 
-When requesting access token using user refresh token, the `scope` parameter can be omitted, the resulting access token will always have the same scope as before. However, the client may get a new user refresh token with the new access token, so it is important that the client always store and use the newest user refresh token.
+When obtaining access token using user refresh token, the `scope` parameter can be omitted, the resulting access token will always have the same scope as before. However, the client may get a new user refresh token with the new access token, so it is important that the client always store and use the newest user refresh token.
+
+**Note:** the scope is required when obtaining a UAT using user's credentials, as of now omitting the scope may still work in some cases but it is not part of the public API and may change anytime, so please do not depend on this behaviour.
 
 #### Definition
 

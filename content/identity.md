@@ -943,11 +943,11 @@ freshcom.createEmailVerification({
 
 ## Password Reset Token
 
-Password reset token (PRT) is a token used for updating a user's password without its current password. The only action available for PRT is create. PRT cannot be retrieved through the Freshcom API, instead you should create notification trigger to send a link with the PRT to the user using email or SMS upon its creation. PRT expires in 24 hours. Please see our guide on [resetting user password](http://example.com).
+Password reset token (PRET) is a token used for reseting a user's password without providing its current password. The only action available for for this resource is create. Password reset token cannot be retrieved through the Freshcom API, instead you should create a notification trigger to send a link with the token to the user using email or SMS upon its creation. Password reset token expires in 24 hours. Please see our guide on [resetting user password](http://example.com).
 
-### Create a PRT
+### Create a PRET
 
-Use this endpoint to create a password reset token (PRT). Creating a PRT wil automatically invalidate all previous created PRT, each user can only have 1 valid PRT at a time.
+Use this endpoint to create a password reset token. Creating a token wil automatically invalidate all previous created token, each user can only have 1 valid token at a time. You must use a publishable access token in order to use this endpoint. To successfully create a token, the username provided must be of a user that is a member of your account. It does not matter whether the target user is a standard user or managed user.
 
 **Authorization**
 
@@ -957,7 +957,7 @@ Authorized roles: `guest`
 
 Name                     | Type     | Description
 -------------------------|----------|-------------|
-`username`               | `String` | _(required)_ The username of the user.
+`username`               | `String` | _(required)_ The username of the target user.
 
 **Events**
 
@@ -967,7 +967,7 @@ You can create a notification trigger for this event to send a link with the tok
 
 Event Data               | Type       | Description
 -------------------------|------------|-------------|
-`passwordResetToken`     | `String`   | The created PRT.
+`passwordResetToken`     | `String`   | The created password reset token.
 `user`                   | `String`   | The target user.
 `account`                | `String`   | The account the user belongs to.
 
