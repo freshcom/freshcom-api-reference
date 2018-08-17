@@ -4,6 +4,8 @@ The Freshcom API is organized around [REST](http://en.wikipedia.org/wiki/Represe
 
 The Freshcom API tries to follow [JSONAPI v1.0 Specification](http://jsonapi.org/) as much as possible. It is recommended you briefly read through the spec to understand the general format of the API. If you find any of our endpoint that does not comply with [JSONAPI v1.0 Specification](http://jsonapi.org/) please open an issue [here](http://github.com) and we will address it as soon as possible.
 
+To make the API as explorable as possible, each account is associated with a test account. Simply use the appropriate API credentials to perform request against live or test account. Request made against the test account will never incur any cost.
+
 ```javascript
 // 1. Create a access token using a administrator's refresh token
 freshcom.createAndSetAccessToken({
@@ -44,7 +46,7 @@ The Freshcom API handles authentication through OAuth2. The client must first ob
 
 - **Access Token**: Access token are short lived token that usually expires in 1 hour. The client send the access token through the `Authorization` HTTP header to authenticate itself. Access token are considered secret and cannot be revoked easily so the client should never store it anywhere, only keep it in memory.
 
-- **Refresh Token**: Refresh token are long lived token. In the alpha version, refresh token will never expires. In the upcoming beta version the expires time can be set through the Freshcom Dashboard. The client can use refresh token to get a new access token. Refresh token can be revoked easily in case it is compromised. Refresh token can either be obtained using user's credential or from the Freshcom Dashboard.
+- **Refresh Token**: Refresh token are long lived token. Right now, refresh token never expires, in the future its expiry time can be set through the Freshcom Dashboard. The client can use refresh token to get a new access token. Refresh token can be revoked easily in case it is compromised. Refresh token can either be obtained using user's credential or from the Freshcom Dashboard.
 
 There are 2 types access token in Freshcom and each type of access token have a corresponding refresh token:
 
@@ -307,17 +309,34 @@ Content-Type: application/json
 
 ## Authorization
 
-Freshcom uses role based authorization, each user of Freshcom is assigned a single role and each role have a specific set of permissions. You are free to change the user's role through the API or Freshcom Dashboard. Right now there is no way to create new role or to change the permissin of each role, however such feature may be available in the future. Here is a list of avilable roles:
+Freshcom uses role based authorization, each user of Freshcom is assigned a single role and each role have a specific set of permissions. The role guest and customer are reserved roles that are set automatically in specific situation or to system created users. You are free to change the user's role through the API or Freshcom Dashboard to any non-reserved role. Right now there is no way to create new role or to change the permissin of each role, however such feature may be available in the future. Here is a list of avilable roles:
 
-- `customer`
-- `supportSpecialist`
-- `marketingSpecialist`
-- `goodsSpecialist`
-- `businessAnalyst`
-- `developer`
-- `administrator`
+- **Guest** - _(reserved)_ This is the default role if a client is using a PAT to access the API on behalf of a user.
 
-If a client is using a PAT to access the API on behalf of a user then we consider the user to have a `guest` role.
+- **Customer** - _(reserved)_ A user that is associated with a customer will always have this role and cannot be changed. The customer role allow a user to have all access of the guest role plus access to resources that it owns for example its own orders, payments, profile and so on.
+
+- **Read Only** - This role will allow a user to be able to view all information that is accessible through the Freshcom Dashboard with the exception of API credentials.
+
+- **Support Specialist** - This role will allow a user to:
+  1. Manage all resources related to order, payment, customer and fulfillment.
+  2. View all resources related to active and internal products.
+  3. View all resources related to email and SMS.
+
+- **Marketing Specialist** - This role will allow a user to:
+  1. Manage all resources related to products.
+  2. View all resources related to active and internal goods.
+
+- **Goods Specialist** - This role will allow user to manage all resoures related to goods.
+
+- **Manager** - This role will allow a user to manage all resources EXCEPT:
+  1. Viewing API credentials
+  2. Viewing resources related notification triggers
+  3. Editing email and sms template
+  4. Viewing team information
+
+- **Developer** - This role will allow a user to manage all resources EXCEPT viewing team information.
+
+- **Administrator** - This role will allow a user to have full control over an account.
 
 Through out the API reference we may refer to a user with a specific role simply as "{role} user" where {role} can be any of the available roles. For example a customer user means a user with role `customer` and a developer user means a user with role `developer`.
 
@@ -325,13 +344,7 @@ Through out the API reference we may refer to a user with a specific role simply
 
 ## Custom Data
 
-Freshcom API allow you to add custom data to most of the resources you create. Custom data can be any valid JSON object. Custom data can be translated as well (see [Internalization](http://example.com)) .
-
-Custom data are allowed for the following resource:
-
-- User
-- Account
-- Account Membership
+Freshcom API allow you to add custom data to most of the resources you create. Custom data can be any valid JSON object. Custom data can be translated as well (see [Internalization](http://example.com)).
 
 #### Example Request
 
@@ -481,6 +494,74 @@ Content-Type: application/vnd.api+json
 
 ## Includes
 
+Many resources that Freshcom API provide are related to one or more other resources. For example, a `Stockable` resource have an associated `avatar` which is a `File`. When loading the main resource by default Freshcom API do not load the related resources. However they may be cases where you do want to load the related resources with the main resource, in this case you can simply provide the `include` query parameters to ask for the related resources.
+
+You can also nest the include for example when loading an `Order` you can specify `include=lineItems.product`. This will load the order together with all of its line items and the product of each line item.
+
+If you are loading a has many association and there is more 50 associated resources then only the first 50 will be loaded. In the above example if the order has more than 50 line items then only the first 50 will be loaded. In order to retrieve the rest of the line items you will need to make an extra request to the list line item endpoint and adjust the pagination parameter accordingly.
+
+#### Example Request
+
+```http
+GET /v1/stockables/33768c8a-a7e7-448e-ad2c-4279228b5bf4?locale=zh-CN&include="avatar,fileCollections"
+Host: api.freshcom.io
+Content-Type: application/vnd.api+json
+Authorization: Bearer {access_token}
+```
+
+```javascript
+import freshcom from 'freshcom-sdk'
+
+freshcom.retrieveStockable('33768c8a-a7e7-448e-ad2c-4279228b5bf4', {
+  locale: 'zh-CN',
+  include: 'avatar,fileCollections'
+}).then(function (response) {
+  console.log(response)
+}).catch(function (response) {
+  console.log(response)
+})
+```
+
+#### Example Response
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+
+```json
+{
+  "meta": {
+    "locale": "zh-CN"
+  },
+  "data": {
+    "id": "33768c8a-a7e7-448e-ad2c-4279228b5bf4",
+    "type": "Stockable",
+    "attributes": {
+      "name": "曲速引擎"
+    },
+    "relationships": {
+      "avatar": {
+        "data": {
+          "id": "92173eba-908e-47ea-94e3-b058f85dbc1d",
+          "type": "File"
+        }
+      },
+      "fileCollections": {
+        "data": []
+      }
+    }
+  },
+  "included": [
+    {
+      "id": "92173eba-908e-47ea-94e3-b058f85dbc1d",
+      "type": "File",
+      "attributes": {
+        "name": "avatar.jpg"
+      }
+    }
+  ]
+}
+```
 
 ## Internalization
 
@@ -591,4 +672,76 @@ Content-Type: application/json
 
 ## Pagination
 
+All endpoints that list resources supports pagination. You can modify the pagination by setting the `page[number]` and `page[size]` query parameters.
+
+If you do not specify any pagination parameter the default `page[size]` is `25`.
+
+As of now Freshcom API do not yet support cursor-based pagination however it will be supported in the future.
+
+
+#### Example Request
+
+```http
+GET /v1/stockables?page[number]=2&page[size]=5
+Host: api.freshcom.io
+Content-Type: application/vnd.api+json
+Authorization: Bearer {access_token}
+```
+
+```javascript
+import freshcom from 'freshcom-sdk'
+freshcom.setAccessToken('{access_token}')
+
+freshcom.listStockable({
+  page: { number: 2, size: 3 }
+}).then(function (response) {
+  console.log(response)
+}).catch(function (response) {
+  console.log(response)
+})
+```
+
+#### Example Response
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+
+```json
+{
+  "meta": {
+    "locale": "en",
+    "totalCount": 5,
+    "allCount": 102
+  },
+  "data": [
+    {
+      "id": "9fc8ee53-906f-48bd-a392-8b0709301699",
+      "type": "Stockable",
+      "attributes": {
+        "status": "active",
+        ...
+      },
+      "relationships": {
+        ...
+      }
+    },
+    {...},
+    {...}
+  ]
+}
+```
+
+
+
+
 ## Versioning
+
+**Note**: Since Freshcom API is still in alpha, it does not support any versioning yet. Below is the proposed way to be implemented for stable release.
+
+When we make backwards-incompatible changes to the Freshcom API, we will release new version named using the release date, For example 2018-11-01. We will guaranteed that each version will be supported for at least 2 years, and even after 2 years we will continue support it until majority of the user has upgraded to a newer version.
+
+When you first create an account your API version will be locked to the most recent version, this will be the default API version of your account. When a new version is release your account will not automatically upgrade, however if you do want to upgrade you can do that manually through the Dashboard.
+
+All requests you send will use your account's default API version unless you specify a `X-FRESHCOM-VERSION` header in a specific request in which case for this specific request the value in the header will take precedence.
