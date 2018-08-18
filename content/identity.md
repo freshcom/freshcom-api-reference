@@ -1,22 +1,22 @@
 ## Account
 
-An account represents a business or an app that uses the Freshcom API and pay to Freshcom using the same billing information. When you sign up for Freshcom, an account is automatically created for you. You can create more accounts as needed, for example if you are an agency that builds e-commerce app for different clients then you can create an account for each of your client to keep track of billing.
+An account represents a business or an app that uses Freshcom API and pay to Freshcom using the same billing information. When you first sign up, an account is automatically created for you. You can create more accounts as needed, for example if you are an agency that builds e-commerce app for different clients then you can create an account for each of your client to keep track of billing.
 
-Each account also have a test account associated with it. If you make changes to an account, those changes will be automatically synced to its corresponding test account. If you wish to test against an account with different information then the recommmended way is to create a new account.
+Each account also have a test account associated with it. If you make changes to an account, those changes will be automatically synced to its corresponding test account. If you wish to test against an account with different settings then the recommmended way is to create a new account.
 
 **Attributes**
 
 Name                   | Type       | Description |
 -----------------------|------------|-------------|
 `status`               | `String`   | The status of the account.
-`name`                 | `String`   | _(localizable)_ The name of the account.
-`companyName`          | `String`   | _(user-defined)_ _(localizable)_ The company name of the account.
+`name`                 | `String`   | The name of the account.
+`companyName`          | `String`   | _(localizable)_ The company name of the account.
 `mode`                 | `String`   | The mode of the account, can be one of `live` or `test`.
 `defaultLocale`        | `String`   | The default locale of the account.
 `defaultAuthMethod`    | `String`   | The default authentication method for user, can be one of `simple`, `tfa_email` or `tfa_sms`. Please see [authentication](http://example.com) for detail.
 `websiteUrl`           | `String`   | The website URL of the company.
 `supportEmail`         | `String`   | The email to contact for non-technical matter
-`techEmail`            | `String`   | The email to contact for technical related matter
+`techEmail`            | `String`   | The email to contact for technical matter
 `testAccountId`        | `String`   | The test account ID for this account if it is a `live` account.
 `apiVersion`           | `String`   | The default API version that is currently used by this account
 `caption`              | `String`   | _(user-defined)_ _(localizable)_ A short description for the account.
@@ -39,7 +39,7 @@ Name                   | Type       | Description |
       "defaultAuthMethod": "simple",
       "websiteUrl": "https://example.com",
       "supportEmail": "support@example.com",
-      "techEmal": "tech@example.com",
+      "techEmail": "tech@example.com",
       "testAccountId": "9fdd716d-7222-46e4-aaeb-0d798063c463",
       "apiVersion": "20180331",
       "caption": null,
@@ -91,7 +91,7 @@ freshcom.retrieveAccount().then(function (response) {
 
 ```http
 HTTP/1.1 200 OK
-Content-Type: application/json
+Content-Type: application/vnd.api+json
 ```
 
 ```json
@@ -121,11 +121,11 @@ Content-Type: application/json
 
 ### Update current account
 
-Use this endpoint to update the account associated with the access token of the request.
+Use this endpoint to update the current account. If the current account is a test account this endpoint will return 422. To update a test account simply use a live access token to update the corresponding live account and the test account will be automatically updated. A test account will always be kept in sync with its corresponding live account.
 
 **Authorization**
 
-Authorized roles: `developer`, `administrator`
+Authorized roles: Developer and Administrator
 
 **Attributes**
 
@@ -198,7 +198,7 @@ freshcom.updateAccount({
 
 ```http
 HTTP/1.1 200 OK
-Content-Type: application/json
+Content-Type: application/vnd.api+json
 ```
 
 ```json
@@ -230,23 +230,23 @@ Content-Type: application/json
 
 An user represents someone who uses the Freshcom API. This could be a customer, an application, or a developer. A user will always be a member of at least one account.
 
-**Type of User**
+**Kind of User**
 
-Ther are two types of user in Freshcom:
+Ther are two kinds of user in Freshcom:
 
-- Global user - this type of user can only be created by signing up through Freshcom Dashboard. Global user can join other account and can create and own multiple accounts.
+- Standard user - this type of user can only be created by signing up through Freshcom Dashboard. Standard user can create and own multiple accounts.
 
-- Account user - this type of user can be created by using the Freshcom API or through the Freshcom Dashboard. Account user is scoped to a specific account and thus cannot create more account or join other account.
+- Managed user - this type of user can be created by using the Freshcom API or through the Freshcom Dashboard. Managed user is scoped to a specific account and thus cannot create more account.
 
 **Username**
 
-User is uniquely identified by its username. Username can be any alphanumeric string plus - (dash), @ (at sign), . (dot), + (plus) and/or _ (underscore). Global user's username is managed by Freshcom and is always the same as its email. Because user is not identified by its email, account user does not need to have unique email by default, if you require email to be unique you can change the settings in Freshcom Dashboard.
+User is uniquely identified by its username. Username can be any alphanumeric string plus - (dash), @ (at sign), . (dot), + (plus) and/or _ (underscore). Standard user's username is managed by Freshcom and is always the same as its email. Because user is not identified by its email, managed user does not need to have unique email by default, if you require email to be unique you can change the settings in Freshcom Dashboard.
 
-A global user's username must be unique across all global users hence their email must also be unique because for global users their email is their username.
+A standard user's username must be unique across all standard users hence their email must also be unique because for standard users their email is their username.
 
-Account user's username must be unique across all user that is a member of that specific account this include other account user under that specific account and global user that joined that specific account. For example if an account is owned by a global user with username `user1@example.com`, and another global user with username `user2@example.com` joined that same account then an account user with the username `user1@example.com` or `user2@example.com` will violate the uniqueness contraint and trying to create or update a user with those username will always fail. The username `user3@example.com` will be valid even if there is another global user with that same username.
+Managed user's username must be unique across all user that is a member of that specific account this include other managed user under that specific account and standard user that joined that specific account. For example if an account is owned by a standard user with username `user1@example.com`, and another standard user with username `user2@example.com` joined that same account then an managed user with the username `user1@example.com` or `user2@example.com` will violate the uniqueness contraint and trying to create or update a user with those username will always fail. The username `user3@example.com` will be valid even if there is another standard user with that same username.
 
-A global user with a username that conflicts with a specific account's account user will not be able to join that specific account. For example if there is an account user with username `user3@example.com` then a global user with that same username will conflict with the account user so will not be able to join that account.
+A standard user with a username that conflicts with a specific account's managed user will not be able to join that specific account. For example if there is an managed user with username `user3@example.com` then a standard user with that same username will conflict with the managed user so will not be able to join that account.
 
 **Attributes**
 
@@ -263,14 +263,12 @@ Name                       | Type       | Description
 `role`                     | `String`   | The role of the user.
 `emailVerified`            | `Boolean`  | Indicate whether the email is verified.
 `emailVerifiedAt`          | `String`   | The datetime that the email got verified.
-`passwordUpdatedAt`        | `String`   | The datetime that the password last updated at.
-`customData`               | `Object`   |
 
 **Relationships**
 
 Name             | Type           | Description
 -----------------|----------------|-------------|
-`account`        | `Account`      | This is the account the user belongs to. If the user is a global user, then it will always be `null`.
+`account`        | `Account`      | This is the account the user belongs to. If the user is a standard user, then it will always be `null`.
 
 #### Example Response
 
@@ -292,9 +290,8 @@ Name             | Type           | Description
       "lastName": "Evil",
       "authMethod": "simple",
       "role": "administrator",
-      "emailVerified": true,
-      "emailVerifiedAt": "",
-      "passwordUpdated": "",
+      "emailVerified": false,
+      "emailVerifiedAt": null,
       "customData": {}
     }
   }
@@ -303,11 +300,11 @@ Name             | Type           | Description
 
 ### Create a user
 
-Use this endpoint to create a new user.
+Use this endpoint to create a managed user.
 
 **Authorization**
 
-Authorized roles: `administrator`
+Authorized roles: Administrator
 
 **Attributes**
 
@@ -318,20 +315,19 @@ Name                   | Type       | Description
 `password`             | `String`   | _(required)_ The password of the user
 `email`                | `String`   | Required if `authMethod` is `tfa_email`
 `phoneNumber`          | `String`   | Required if `authMethod` is `tfa_sms`
-`name`                 | `String`   | The full name of the user.
-`firstName`            | `String`   | The first name of the user.
-`lastName`             | `String`   | The last name of the user.
+`name`                 | `String`   | The full name of the user. Required both first name and last name is not provided.
+`firstName`            | `String`   | The first name of the user. Required if name is not provided.
+`lastName`             | `String`   | The last name of the user. Required if name is not provided.
 `authMethod`           | `String`   | _(default: `simple`)_ The authentication method.
 `role`                 | `String`   | _(required)_ The role of the user.
 `emailVerified`        | `Boolean`  | _(default: `false`)_ Indicate whether the email is verified.
-`customData`           | `Object`   |
 
 **Events**
 
 Name: `identity.user.create.success`
 
-Event Data             | Type     | Description
------------------------|----------|-------------|
+Event Data             | Type       | Description
+-----------------------|------------|-------------|
 `user`                 | `User`     | The created user
 `account`              | `Account`  | The account the user belongs to
 
@@ -369,6 +365,7 @@ Authorization: Bearer {access_token}
     "type": "User",
     "attributes": {
       "username": "test",
+      "name": "Test User",
       "password": "supersecurepassword",
       "role": "developer"
     }
@@ -381,6 +378,7 @@ import freshcom from 'freshcom-sdk'
 
 freshcom.createUser({
   username: 'test',
+  name: "Test User",
   password: 'supersecurepassword',
   role: 'developer'
 }).then(function (response) {
@@ -394,7 +392,7 @@ freshcom.createUser({
 
 ```http
 HTTP/1.1 201 Created
-Content-Type: application/json
+Content-Type: application/vnd.api+json
 ```
 
 ```json
@@ -416,9 +414,7 @@ Content-Type: application/json
       "authMethod": "simple",
       "role": "developer",
       "emailVerified": false,
-      "emailVerifiedAt": null,
-      "passwordUpdated": null,
-      "customData": {}
+      "emailVerifiedAt": null
     }
   }
 }
@@ -465,7 +461,7 @@ freshcom.retrieveUser().then(function (response) {
 
 ```http
 HTTP/1.1 200 OK
-Content-Type: application/json
+Content-Type: application/vnd.api+json
 ```
 
 ```json
@@ -488,7 +484,6 @@ Content-Type: application/json
       "role": "developer",
       "emailVerified": false,
       "emailVerifiedAt": null,
-      "passwordUpdated": null,
       "customData": {}
     }
   }
@@ -497,11 +492,11 @@ Content-Type: application/json
 
 ### Retrive a user
 
-Use this endpoint to retrive an existing user.
+Use this endpoint to retrive a managed user.
 
 **Authorization**
 
-Authorized roles: `administrator`
+Authorized roles: Administrator
 
 **Parameters**
 
@@ -542,7 +537,7 @@ freshcom.retrieveUser('e407d0dc-58d4-48ff-a70f-c6e022e028f1').then(function (res
 
 ```http
 HTTP/1.1 200 OK
-Content-Type: application/json
+Content-Type: application/vnd.api+json
 ```
 
 ```json
@@ -565,7 +560,6 @@ Content-Type: application/json
       "role": "administrator",
       "emailVerified": false,
       "emailVerifiedAt": null,
-      "passwordUpdated": null,
       "customData": {}
     }
   }
@@ -574,11 +568,11 @@ Content-Type: application/json
 
 ### Update current user
 
-Use this endpoint to update the user associated with the provided access token.
+Use this endpoint to update the user associated with the provided access token. If the current user is a live user then you must use a live access token to update it. Using a test access token will only allow you to update test users.
 
 **Authorization**
 
-Authorized roles: all except `guest`
+Authorized roles: all except guest
 
 **Attributes**
 
@@ -649,7 +643,7 @@ freshcom.updateCurrentUser({
 
 ```http
 HTTP/1.1 200 OK
-Content-Type: application/json
+Content-Type: application/vnd.api+json
 ```
 
 ```json
@@ -671,9 +665,7 @@ Content-Type: application/json
       "authMethod": "simple",
       "role": "developer",
       "emailVerified": false,
-      "emailVerifiedAt": null,
-      "passwordUpdated": null,
-      "customData": {}
+      "emailVerifiedAt": null
     }
   }
 }
@@ -681,11 +673,11 @@ Content-Type: application/json
 
 ### Update a user
 
-Use this endpoint to update a user.
+Use this endpoint to update a managed user.
 
 **Authorization**
 
-Authorized roles: `administrator`
+Authorized roles: Administrator
 
 **Parameters**
 
@@ -765,7 +757,7 @@ freshcom.updateCurrentUser('e407d0dc-58d4-48ff-a70f-c6e022e028f1', {
 
 ```http
 HTTP/1.1 200 OK
-Content-Type: application/json
+Content-Type: application/vnd.api+json
 ```
 
 ```json
@@ -787,13 +779,154 @@ Content-Type: application/json
       "authMethod": "simple",
       "role": "developer",
       "emailVerified": false,
-      "emailVerifiedAt": null,
-      "passwordUpdated": null,
-      "customData": {}
+      "emailVerifiedAt": null
     }
   }
 }
 ```
+
+### Delete a user
+
+Use this endpoint to delete a managed user.
+
+**Authorization**
+
+Authorized roles: Administrator
+
+**Parameters**
+
+Name                   | Type       | Description
+-----------------------|------------|-------------|
+`id`                   | `String`   | ID of the user
+
+**Events**
+
+Name: `identity.user.delete.success`
+
+Event Data             | Type       | Description
+-----------------------|------------|-------------|
+`user`                 | `String`   | The deleted user.
+`account`              | `String`   | The account that the user belongs to.
+
+**Returns**
+
+This endpoint returns nothing
+
+#### Definition
+
+```endpoint
+DELETE /users/{id}
+```
+
+#### Example Request
+
+```http
+DELETE /v1/users/e407d0dc-58d4-48ff-a70f-c6e022e028f1
+Host: api.freshcom.io
+Content-Type: application/vnd.api+json
+Authorization: Bearer {access_token}
+```
+
+```javascript
+import freshcom from 'freshcom-sdk'
+
+freshcom.deleteUser('e407d0dc-58d4-48ff-a70f-c6e022e028f1').then(function (response) {
+  console.log(response)
+}).catch(function (response) {
+  console.log(response)
+})
+```
+
+#### Example Response
+
+```http
+HTTP/1.1 204 No Content
+Content-Type: application/vnd.api+json
+```
+
+```json
+{
+  "meta": {
+    "locale": "en"
+  },
+  "data": {
+    "id": "e407d0dc-58d4-48ff-a70f-c6e022e028f1",
+    "type": "User",
+    "attributes": {
+      "status": "active",
+      "username": "test",
+      "email": null,
+      "phoneNumber": null,
+      "name": "Captain Good",
+      "firstName": null,
+      "lastName": null,
+      "authMethod": "simple",
+      "role": "developer",
+      "emailVerified": false,
+      "emailVerifiedAt": null
+    }
+  }
+}
+```
+
+## Account Membership
+
+Account membership represent the relationship between a account and a user.
+
+**Attributes**
+
+Name                       | Type       | Description
+---------------------------|------------|-----------------------|
+`role`                     | `String`   | The role for the user.
+
+**Relationships**
+
+Name             | Type           | Description
+-----------------|----------------|-------------|
+`account`        | `Account`      |
+`user`           | `User`         |
+
+#### Example Response
+
+```json
+{
+  "meta": {
+    "locale": "en"
+  },
+  "data": {
+    "id": "e407d0dc-58d4-48ff-a70f-c6e022e028f1",
+    "type": "AccountMembership",
+    "attributes": {
+      "role": "developer",
+      "accountName": "Starship Manufacturing Inc",
+      "userName": "Captain Good",
+      "userUsername": "captaingood",
+      "userEmail": "test@example.com",
+      "userKind": "standard",
+      "updatedAt": "2018-10-01T07:43:29.516422",
+      "insertedAt": "2018-10-01T07:43:29.516422"
+    },
+    "relationships": {
+      "user": {
+        "data": {
+          "id": "fadcf7f9-a000-4271-98d6-96ade8a2e082",
+          "type": "User"
+        }
+      },
+      "account": {
+        "data": {
+          "id": "83fae37b-1916-453d-9c90-d55ff3d60083",
+          "type": "Account"
+        }
+      }
+    }
+  }
+}
+```
+
+### List account memberships
+
+
 
 ## Email Verification Token
 

@@ -46,17 +46,17 @@ The Freshcom API handles authentication through OAuth2. The client must first ob
 
 - **Access Token**: Access token are short lived token that usually expires in 1 hour. The client send the access token through the `Authorization` HTTP header to authenticate itself. Access token are considered secret and cannot be revoked easily so the client should never store it anywhere, only keep it in memory.
 
-- **Refresh Token**: Refresh token are long lived token. Right now, refresh token never expires, in the future its expiry time can be set through the Freshcom Dashboard. The client can use refresh token to get a new access token. Refresh token can be revoked easily in case it is compromised. Refresh token can either be obtained using user's credential or from the Freshcom Dashboard.
+- **Refresh Token**: Refresh token are long lived token. Right now, refresh token never expires, in the future its expiry time can be set through the Freshcom Dashboard. The client can use refresh token to get a new access token. Refresh token can be revoked easily in case it is compromised. Refresh token can either be obtained using user's credential or from the Dashboard.
 
-There are 2 types access token in Freshcom and each type of access token have a corresponding refresh token:
+There are 2 types access token for the API and each type of access token have a corresponding refresh token:
 
 - **Publishable Access Token (PAT)**: Using a publishable access token, the client can access the account's resources that is available to the public. For example listing all active products. This access token allow the client to act as a guest user.
 
-- **User Access Token (UAT)**: Using a user access token the client can access a subset or all resources of an account as defined by the user's role in the Freshcom Dashboard.
+- **User Access Token (UAT)**: Using a user access token the client can access a subset or all resources of an account as defined by the user's role in the Dashboard.
 
 ### Obtain a PAT
 
-To obtain a publishable access token, the client must have the publishable refresh token which can be obtained from the Freshcom Dashboard. The publishable refresh token is considered public and it never expires, so this can be hard coded to the client-side code as desired. With the publishable refresh token available, the client can now make a POST request to `/v1/token` to get a publishable access token.
+To obtain a publishable access token, the client must have the publishable refresh token which can be obtained from the Dashboard. The publishable refresh token is considered public and it never expires, so this can be hard coded to the client-side code as desired. With the publishable refresh token available, the client can now make a POST request to `/v1/token` to get a publishable access token.
 
 The publishable access token that the client get back will be valid for 1 hour, before it expires it is the client's responsiblity to get a new publishable access token using the same process as above.
 
@@ -204,21 +204,21 @@ Content-Type: application/json
 
 ### Two Factor Auth
 
-Freshcom also supports two factor authentication (TFA) for business that require extra security for their customer. To enable TFA you must set `authMethod` on the user resource that you want to enable TFA to `tfa_email` or `tfa_sms`. You can also set the `defaultAuthMethod` on the account resource to make user use a specific authentication method by default.
+Freshcom API also supports two factor authentication (TFA) for business that require extra security for their customer. To enable TFA you must set `authMethod` on the user resource that you want to enable TFA to `tfa_email` or `tfa_sms`. You can also set the `defaultAuthMethod` on the account resource to make user use a specific authentication method by default.
 
 After you enable TFA for a user, obtaining UAT require an one time password (OTP) in addition to the user's username and password. The process for obtaining UAT for a TFA-enabled user is as follow:
 
 1. Try obtain UAT like normal by providing just the username and password.
 
-2. Freshcom API will return an error, with a special header `X-Freshcom-OTP: required; auth_method=tfa_sms`. This means an OTP has been sent using that specific method. If `auth_method=tfa_email` then OTP is sent using email, if using `auth_method=tfa_sms` then OTP is sent using text messages.
+2. The API will return an error, with a special header `X-Freshcom-OTP: required; auth_method=tfa_sms`. This means an OTP has been sent using that specific method. If `auth_method=tfa_email` then OTP is sent using email, if using `auth_method=tfa_sms` then OTP is sent using text messages.
 
 3. Prompt the user to enter the OTP they received.
 
 4. Obtain UAT by sending the username, password and an additional header `X-Freshcom-OTP: {otp}`.
 
-5. If everything is valid, Freshcom API will return the UAT.
+5. If everything is valid, the API will return the UAT.
 
-**Note:** If the username and password the user provide is not valid, then Freshcom API will return an error but there will be no `X-Freshcom-OTP` header. That header will only be set if the usernamd and password provided in step 1 is valid.
+**Note:** If the username and password the user provide is not valid, then the API will return an error but there will be no `X-Freshcom-OTP` header. That header will only be set if the usernamd and password provided in step 1 is valid.
 
 #### Example Request for step 1
 
@@ -309,7 +309,7 @@ Content-Type: application/json
 
 ## Authorization
 
-Freshcom uses role based authorization, each user of Freshcom is assigned a single role and each role have a specific set of permissions. The role guest and customer are reserved roles that are set automatically in specific situation or to system created users. You are free to change the user's role through the API or Freshcom Dashboard to any non-reserved role. Right now there is no way to create new role or to change the permissin of each role, however such feature may be available in the future. Here is a list of avilable roles:
+Freshcom API uses role based authorization, each user is assigned a single role and each role have a specific set of permissions. The role guest and customer are reserved roles that are set automatically in specific situation or to system created users. You are free to change the user's role through the API or Dashboard to any non-reserved role. Right now there is no way to create new role or to change the permissin of each role, however such feature may be available in the future. Here is a list of avilable roles:
 
 - **Guest** - _(reserved)_ This is the default role if a client is using a PAT to access the API on behalf of a user.
 
@@ -393,7 +393,7 @@ Freshcom API return errors according to the spec defined in [JSONAPI v1.0 Specif
 
 - `source` - A pointer to the source that caused error if any.
 
-- `title` - A human readable message in English. Client side code should not dependent on this message as Freshcom may change the content of the huamn readable message from time to time. It is recommended client compose their own human readable mssage using the error code.
+- `title` - A human readable message in English. Client side code should not dependent on this message it may change from time to time. It is recommended client compose their own human readable mssage using the error code.
 
 #### Example Response with errors
 
@@ -413,11 +413,11 @@ Freshcom API return errors according to the spec defined in [JSONAPI v1.0 Specif
 
 ## Event
 
-Freshcom API fires event for most of the endpoints. These events can be used to trigger [notification](#notification) like [webhook](#webook), [email](#email) or [SMS](#sms). Each event in Freshcom is identified with its name in the format of `{module}.{resource}.{action}.{result}` for example `identity.account.updated.success`.
+Freshcom API fires event for most of the endpoints. These events can be used to trigger [notification](#notification) like [webhook](#webook), [email](#email) or [SMS](#sms). Each event is identified with its name in the format of `{module}.{resource}.{action}.{result}` for example `identity.account.updated.success`.
 
 Each event also comes with associated event data. The event data comes in different format depending on the triggering action.
 
-If the triggering action is a webhook call then the event data will be the same as any Freshcom API response with a few meta info added. If additional information is needed it is up to your implementation to make additional request to Freshcom API to get it.
+If the triggering action is a webhook call then the event data will be the same as any API response with a few meta info added. If additional information is needed it is up to your implementation to make additional request to the API to get it.
 
 If the triggering action is to send an email or SMS then the event data will be in a deserialize format with as much information as we think fit, since in this case you do not have control over what additional data to retrieve. We use a deserialized format so that you can easily access the information you need in your email or SMS template like `{{account.name}}` instead of `{{data.attributes.name}}`.
 
@@ -494,7 +494,7 @@ Content-Type: application/vnd.api+json
 
 ## Includes
 
-Many resources that Freshcom API provide are related to one or more other resources. For example, a `Stockable` resource have an associated `avatar` which is a `File`. When loading the main resource by default Freshcom API do not load the related resources. However they may be cases where you do want to load the related resources with the main resource, in this case you can simply provide the `include` query parameters to ask for the related resources.
+Many resources that Freshcom API provide are related to one or more other resources. For example, a `Stockable` resource have an associated `avatar` which is a `File`. When loading the main resource by default the API do not load the related resources. However they may be cases where you do want to load the related resources with the main resource, in this case you can simply provide the `include` query parameters to ask for the related resources.
 
 You can also nest the include for example when loading an `Order` you can specify `include=lineItems.product`. This will load the order together with all of its line items and the product of each line item.
 
