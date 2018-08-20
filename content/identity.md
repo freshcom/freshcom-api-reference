@@ -79,6 +79,7 @@ Authorization: Bearer {access_token}
 
 ```javascript
 import freshcom from 'freshcom-sdk'
+freshcom.setAccessToken('{access_token}')
 
 freshcom.retrieveAccount().then(function (response) {
   console.log(response)
@@ -125,7 +126,7 @@ Use this endpoint to update the current account. If the current account is a tes
 
 **Authorization**
 
-Authorized roles: Developer and Administrator
+Authorized roles: developer and administrator
 
 **Attributes**
 
@@ -184,6 +185,7 @@ Authorization: Bearer {access_token}
 
 ```javascript
 import freshcom from 'freshcom-sdk'
+freshcom.setAccessToken('{access_token}')
 
 freshcom.updateAccount({
   name: 'Warp Drive Manufacturing'
@@ -304,7 +306,7 @@ Use this endpoint to create a managed user.
 
 **Authorization**
 
-Authorized roles: Administrator
+Authorized roles: administrator
 
 **Attributes**
 
@@ -375,6 +377,7 @@ Authorization: Bearer {access_token}
 
 ```javascript
 import freshcom from 'freshcom-sdk'
+freshcom.setAccessToken('{access_token}')
 
 freshcom.createUser({
   username: 'test',
@@ -449,6 +452,7 @@ Authorization: Bearer {access_token}
 
 ```javascript
 import freshcom from 'freshcom-sdk'
+freshcom.setAccessToken('{access_token}')
 
 freshcom.retrieveUser().then(function (response) {
   console.log(response)
@@ -496,7 +500,7 @@ Use this endpoint to retrive a managed user.
 
 **Authorization**
 
-Authorized roles: Administrator
+Authorized roles: administrator
 
 **Parameters**
 
@@ -525,6 +529,7 @@ Authorization: Bearer {access_token}
 
 ```javascript
 import freshcom from 'freshcom-sdk'
+freshcom.setAccessToken('{access_token}')
 
 freshcom.retrieveUser('e407d0dc-58d4-48ff-a70f-c6e022e028f1').then(function (response) {
   console.log(response)
@@ -629,6 +634,7 @@ Authorization: Bearer {access_token}
 
 ```javascript
 import freshcom from 'freshcom-sdk'
+freshcom.setAccessToken('{access_token}')
 
 freshcom.updateCurrentUser({
   name: 'Captain Good'
@@ -677,7 +683,7 @@ Use this endpoint to update a managed user.
 
 **Authorization**
 
-Authorized roles: Administrator
+Authorized roles: administrator
 
 **Parameters**
 
@@ -743,6 +749,7 @@ Authorization: Bearer {access_token}
 
 ```javascript
 import freshcom from 'freshcom-sdk'
+freshcom.setAccessToken('{access_token}')
 
 freshcom.updateCurrentUser('e407d0dc-58d4-48ff-a70f-c6e022e028f1', {
   name: 'Captain Good'
@@ -791,7 +798,7 @@ Use this endpoint to delete a managed user.
 
 **Authorization**
 
-Authorized roles: Administrator
+Authorized roles: administrator
 
 **Parameters**
 
@@ -829,6 +836,7 @@ Authorization: Bearer {access_token}
 
 ```javascript
 import freshcom from 'freshcom-sdk'
+freshcom.setAccessToken('{access_token}')
 
 freshcom.deleteUser('e407d0dc-58d4-48ff-a70f-c6e022e028f1').then(function (response) {
   console.log(response)
@@ -926,7 +934,208 @@ Name             | Type           | Description
 
 ### List account memberships
 
+List all the account membership of the current account.
 
+**Authorization**
+
+Authorized roles: administrator
+
+**Parameters**
+
+Name               | Type             | Description
+-------------------|------------------|-------|
+`search`           | `String`         | If provided only membership have `userUsername`, `userName`, `email` that matches the search string will be returned.
+`filter`           | `Object`         |
+`filter.role`      | `String`         | If provided only membership with this role will be returned.
+
+**Returns**
+
+Returns a list of account memberships.
+
+#### Definition
+
+```endpoint
+GET /account_memberships
+```
+
+#### Example Request
+
+```http
+GET /v1/account_memberships
+Host: api.freshcom.io
+Content-Type: application/vnd.api+json
+Authorization: Bearer {access_token}
+```
+
+```javascript
+import freshcom from 'freshcom-sdk'
+freshcom.setAccessToken('{access_token}')
+
+freshcom.listAccountMembership().then(function (response) {
+  console.log(response)
+}).catch(function (response) {
+  console.log(response)
+})
+```
+
+#### Example Response
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/vnd.api+json
+```
+
+```json
+{
+  "meta": {
+    "locale": "en"
+  },
+  "data": [
+    {
+      "id": "e407d0dc-58d4-48ff-a70f-c6e022e028f1",
+      "type": "AccountMembership",
+      "attributes": {
+        "role": "developer",
+        "accountName": "Starship Manufacturing Inc",
+        "userName": "Captain Good",
+        "userUsername": "captaingood",
+        "userEmail": "test@example.com",
+        "userKind": "standard",
+        "updatedAt": "2018-10-01T07:43:29.516422",
+        "insertedAt": "2018-10-01T07:43:29.516422"
+      },
+      "relationships": {
+        "user": {
+          "data": {
+            "id": "fadcf7f9-a000-4271-98d6-96ade8a2e082",
+            "type": "User"
+          }
+        },
+        "account": {
+          "data": {
+            "id": "83fae37b-1916-453d-9c90-d55ff3d60083",
+            "type": "Account"
+          }
+        }
+      }
+    },
+    {...},
+    {...}
+  ]
+}
+```
+
+### Update an account membership
+
+User this endpoint to update an account membership.
+
+**Authorization**
+
+Authorized roles: administrator
+
+**Parameters**
+
+Name               | Type      | Description
+-------------------|-----------|-------|
+`id`               | `String`  | The account membership ID.
+
+**Attributes**
+
+Name                          | Type       | Description
+------------------------------|------------|-------------|
+`role`                        | `String`   | The role of the membership.
+
+**Events**
+
+Name: `identity.account_membership.update.success`
+
+Event Data         | Type                     | Description
+-------------------|--------------------------|--------------|
+`accountMembership`| `AccountMembership`      | The updated account membership.
+`user`             | `User`                   |
+`account`          | `Account`                |
+
+**Returns**
+
+Returns the updated account membership.
+
+#### Definition
+
+```endpoint
+PATCH /account_memberships/{id}
+```
+
+#### Example Request
+
+```http
+PATCH /v1/account_memberships/9fc8ee53-906f-48bd-a392-8b0709301699
+Host: api.freshcom.io
+Content-Type: application/vnd.api+json
+Authorization: Bearer {access_token}
+```
+
+```http
+{
+  "data": {
+    "id": "9fc8ee53-906f-48bd-a392-8b0709301699",
+    "type": "AccountMembership",
+    "attributes": {
+      "role": "administrator"
+    }
+  }
+}
+```
+
+```javascript
+import freshcom from 'freshcom-sdk'
+freshcom.setAccessToken('{access_token}')
+
+freshcom.updateProduct('9fc8ee53-906f-48bd-a392-8b0709301699', {
+  role: 'administrator'
+}).then(function (response) {
+  console.log(response)
+}).catch(function (response) {
+  console.log(response)
+})
+```
+
+#### Example Response
+
+```json
+{
+  "meta": {
+    "locale": "en"
+  },
+  "data": {
+    "id": "9fc8ee53-906f-48bd-a392-8b0709301699",
+    "type": "AccountMembership",
+    "attributes": {
+      "role": "administrator",
+      "accountName": "Starship Manufacturing Inc",
+      "userName": "Captain Good",
+      "userUsername": "captaingood",
+      "userEmail": "test@example.com",
+      "userKind": "standard",
+      "updatedAt": "2018-10-01T07:43:29.516422",
+      "insertedAt": "2018-10-01T07:43:29.516422"
+    },
+    "relationships": {
+      "user": {
+        "data": {
+          "id": "fadcf7f9-a000-4271-98d6-96ade8a2e082",
+          "type": "User"
+        }
+      },
+      "account": {
+        "data": {
+          "id": "83fae37b-1916-453d-9c90-d55ff3d60083",
+          "type": "Account"
+        }
+      }
+    }
+  }
+}
+```
 
 ## Email Verification Token
 
@@ -938,7 +1147,7 @@ Use this endpoint to create a email verification token (EVT). Creating a EVT wil
 
 **Authorization**
 
-Authorized roles: all except `guest`.
+Authorized roles: all except guest
 
 **Relationships**
 
@@ -995,6 +1204,7 @@ Authorization: Bearer {access_token}
 
 ```javascript
 import freshcom from 'freshcom-sdk'
+freshcom.setAccessToken('{access_token}')
 
 freshcom.createEmailVerificationToken({
   user: { id: 'e407d0dc-58d4-48ff-a70f-c6e022e028f1', type: 'User' }
@@ -1064,6 +1274,7 @@ Authorization: Bearer {access_token}
 
 ```javascript
 import freshcom from 'freshcom-sdk'
+freshcom.setAccessToken('{access_token}')
 
 freshcom.createEmailVerification({
   token: "{emailVerificationToken}"
@@ -1084,7 +1295,7 @@ Use this endpoint to create a password reset token. Creating a token wil automat
 
 **Authorization**
 
-Authorized roles: `guest`
+Authorized roles: guest
 
 **Attributes**
 
@@ -1136,6 +1347,7 @@ Authorization: Bearer {access_token}
 
 ```javascript
 import freshcom from 'freshcom-sdk'
+freshcom.setAccessToken('{access_token}')
 
 freshcom.createPasswordResetToken({
   username: "{username}"
@@ -1208,6 +1420,7 @@ Authorization: Bearer {access_token}
 
 ```javascript
 import freshcom from 'freshcom-sdk'
+freshcom.setAccessToken('{access_token}')
 
 freshcom.updatePassword({
   resetToken: "2449fed6-0e5b-4c5e-9bf6-0df7acad25f6",
@@ -1280,6 +1493,7 @@ Authorization: Bearer {access_token}
 
 ```javascript
 import freshcom from 'freshcom-sdk'
+freshcom.setAccessToken('{access_token}')
 
 freshcom.createPhoneVerificationCode({
   phoneNumber: "+1234567890"
